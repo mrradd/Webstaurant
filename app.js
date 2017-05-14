@@ -302,11 +302,11 @@ function createConnection()
   {
   mDBConn = mysql.createConnection(
     {
-      host    : "testdb2.cilqftni5rud.us-west-2.rds.amazonaws.com",
-      user    : "testuser2",
-      password: "Testuser2",
+      host    : "testdb3.cilqftni5rud.us-west-2.rds.amazonaws.com",
+      user    : "testuser3",
+      password: "Testuser3",
       port    : "3306",
-      database: "MainDB",
+      database: "DBMain",
       multipleStatements: true
     });
   }
