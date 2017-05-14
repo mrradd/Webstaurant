@@ -17,15 +17,5 @@ VALUES ('Tina',   'Belcher', 1, 'ET_MANAGER'),
 
 INSERT INTO Users (EmployeeID, UserName, Password, Active)
 VALUES (1, 'UserM', 'userm', 1),
-	     (2, 'UserC', 'userc', 1),
+	   (2, 'UserC', 'userc', 1),
        (3, 'UserW', 'userw', 1);
-
-INSERT INTO Items (Name, Description, Price, Type, SKU, BarCode)
-VALUES ('Angry Orchard', 'Hard cider.',       5.00,  'IT_BEVERAGE', 'ANGRYORCHARD', ''),
-       ('Hamburger',     'Burger with fries', 10.50, 'IT_ENTREE',   'BURGER',       '');
-
-INSERT INTO Orders (Date, EmployeeID, OrderNumber, Paid, Closed)
-VALUES ('2017/04/05', 3, 1, 0, 0);
-
-INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount, TransactionType, PaymentType)
-VALUES (2, 1, 10.50, 1, 0.00, 0.00, 10.50, 0.08, 0.84, 11.34, 'TT_DINE_IN', 'PT_CASH_PAID');
