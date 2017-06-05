@@ -341,14 +341,14 @@ function closeOrder(orderID, callBack)
  *****************************************************************************/
 function createEmployee(employee, callBack)
   {
-  var cmd = "INSERT INTO Employees (FirstName, LastName, EmployeeNumber, EmployeeType) "+
-    "VALUES ('"+employee.firstName+"', '"+employee.lastName+"', "+employee.employeeNumber+", '"+employee.employeeType+"');";
+  var cmd = "INSERT INTO Employees (FirstName, LastName, EmployeeNumber, EmployeeType) VALUES(?,?,?,?)"
+  var parms = [employee.firstName, employee.lastName, employee.employeeNumber, employee.employeeType];
 
   mDB.establishConnection();
   mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, function(err)
+  mDB.conn.query(cmd, parms, function(err)
     {
     if(err) throw err;
     console.log(cmd);
@@ -369,15 +369,14 @@ function createEmployee(employee, callBack)
  *****************************************************************************/
 function createItem(item, callBack)
   {
-  var cmd = "INSERT INTO Items (Name, Description, Price, Type, SKU, BarCode) " +
-            "VALUES ('" + item.name + "', '"+ item.description + "', " + item.price +
-            ", '" + item.type + "', '"+ item.sku +"', '"+item.barcode+"');";
+  var cmd   = "INSERT INTO Items (Name, Description, Price, Type, SKU, BarCode) VALUES (?,?,?,?,?,?)";
+  var parms = [item.name, item.description, item.price, item.type, item.sku, item.barcode];
 
   mDB.establishConnection();
   mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, function(err)
+  mDB.conn.query(cmd, parms, function(err)
     {
     if(err) throw err;
 
@@ -489,6 +488,12 @@ function getOpenOrders(callBack)
  *****************************************************************************/
 function saveOrder(order, callBack)
   {
+
+  mDB.establishConnection();
+  mDB.conn.connect();
+
+  var orderID = 0;
+
   //GENERATE RANDOM NUMBER.
   function getRandomInt(min, max)
     {
@@ -498,46 +503,56 @@ function saveOrder(order, callBack)
     }
   //TODO CH  ORDER NUMBER MUST BE DYNAMIC FROM ORDER.
   /** Create the sql command for creating the order, and saving the most recent order id. */
-  var ord      = order['order'];
-  var ordNum   = getRandomInt(1,999);
-  var cmdOrder =
+  var ord        = order['order'];
+  var ordNum     = getRandomInt(1,999);
+  var orderParms = [ord.date,ord.employeeID,ordNum, ord.paid,ord.closed,ord.transactionType];
+  var orderCmd   =
     "INSERT INTO Orders (Date, EmployeeID, OrderNumber, Paid, Closed, TransactionType)\n" +
-    "VALUES('"+ord.date+"', "+ord.employeeID+", "+ordNum+", "+ ord.paid+", "+ord.closed+", '"+ord.transactionType+"'); \n"
-    + "SET @LastID = LAST_INSERT_ID();\n ";
+    "VALUES(?,?,?,?,?,?); SET @LastID = LAST_INSERT_ID();";
 
-  /** Iterate through all items, and create the sql command for saving each order line item. */
-  var items = order['items'];
-  for(var i = 0; i < items.length; i++)
+  /** Save order record. */
+  mDB.conn.query(orderCmd, orderParms, function(err)
     {
-    //TODO CH  TAX RATE, QUANTITY, DISCOUNT, AND DISCOUNT AMOUNT MUST BE DYNAMIC FROM INCOMING ORDER.
-    var qty      = 1;
-    var subTotal = round(items[i].Price * qty, 2);
-    var taxRate  = 0.0875;
-    var taxAmt   = round(subTotal * taxRate, 2);
-    var total    = subTotal + taxAmt;
-
-    var cmdItem =
-      "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
-      "VALUES ("+items[i].ID+", @LastID, "+items[i].Price+", "+qty+", 0, 0, "+items[i].Price+", "+taxRate+", "+taxAmt+", "+total+");\n";
-
-    cmdOrder += cmdItem;
-    }
-
-  mDB.establishConnection();
-  mDB.conn.connect();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmdOrder, function(err)
-    {
-    console.log(cmdOrder);
-
     if(err) throw err;
+    /** Get ID for the order. */
+    mDB.conn.query("SELECT @LastID AS OrderID;",  function(err, rows)
+      {
+      if(err) throw err;
+      orderID = rows[0].OrderID;
+      /** Iterate through all items, and create the sql command for saving each order line item. */
+      var items = order['items'];
+      var itemParms  = [];
+      var cmdItem = "";
+      for(var i = 0; i < items.length; i++)
+        {
+        //TODO CH  TAX RATE, QUANTITY, DISCOUNT, AND DISCOUNT AMOUNT MUST BE DYNAMIC FROM INCOMING ORDER.
+        var qty      = 1;
+        var subTotal = round(items[i].Price * qty, 2);
+        var taxRate  = 0.0875;
+        var taxAmt   = round(subTotal * taxRate, 2);
+        var total    = subTotal + taxAmt;
 
-    callBack(err);
+        cmdItem +=
+          "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
+          "VALUES (?,?,?,?,?,?,?,?,?,?);\n";
+
+        var itemParms = [items[i].ID,orderID,items[i].Price,qty,0,0,items[i].Price,taxRate,taxAmt,total];
+
+        itemParms.concat(itemParms);
+        }
+
+      /** Save order items. */
+      mDB.conn.query(cmdItem, itemParms, function(err)
+        {
+        if(err) throw err;
+
+        /** Cleanup and close the connection. */
+        mDB.conn.end();
+
+        callBack(err);
+        });
+      });
     });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
   }
 
 /*****************************************************************************

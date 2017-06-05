@@ -128,7 +128,7 @@ $(document).ready(function()
     {
     //TODO  PRE-POPULATE ORDER NUMBER USING LARGEST ORDER NUMBER IN DATABASE.
     var orderNum       = $('#inputOrderNumber').val();
-    var tempEmployeeID = 6;
+    var tempEmployeeID = 3;
     var tempTxnType    = 'TT_DINE_IN';
 
     var header =
