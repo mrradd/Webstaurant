@@ -1,13 +1,55 @@
-//This will be the main Node app. This is configured for local host.
-var http    = require('http');
-var path    = require('path');
-var mysql   = require('mysql');
-var fs      = require('fs');
-var express = require('express');
-var app     = express();
+/*****************************************************************************
+ * app *
+ * The main app for the server.
+ ****************************************************************************/
+var http          = require('http');
+var ejs           = require('ejs')
+var path          = require('path');
+var mysql         = require('mysql');
+var fs            = require('fs');
+var express       = require('express');
+var session       = require('express-session');
+var passport      = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var bodyParser    = require('body-parser');
+var app           = express();
 
 /** Establish root directory. */
 app.use(express.static(__dirname));
+
+/** Setup ejs. */
+app.set('view engine', 'ejs');
+
+/** Passport. */
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(function(username, password, done)
+  {
+  return done(null, {});
+  // process.nextTick(function() {
+  // console.log('authenticating');
+  // const dbConn = require('./db.js');
+  //
+  // dbConn.query('SELECT * FROM Users WHERE Username = ? AND Password = ?', [username, password],
+  //   function(err, results, fields)
+  //   {
+  //   console.log('did query.');
+  //
+  //   if(error) throw error();
+  //   var user = fields[0];
+  //
+  //   if(valid == 1)
+  //     {
+  //     return done(null, user);
+  //     }
+  //
+  //   else
+  //     {
+  //     return done(null, false, { message: 'Invalid credentials.' });
+  //     }
+  //   });});
+  }));
 
 /*****************************************************************************
  * Page loads
@@ -15,42 +57,51 @@ app.use(express.static(__dirname));
 /** Initial page to load. Loads POS page. */
 app.get('/', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/pos.html');
-  res.sendFile(path.join(__dirname+'/public/pos.html'));
+  res.render('pos');
+  });
+
+/** Loads Manager config page. */
+app.get('/config', function(req, res)
+  {
+  res.render('config');
   });
 
 /** Loads Kitchen page. */
 app.get('/kitchen', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/kitchen.html');
-  res.sendFile(path.join(__dirname+'/public/kitchen.html'));
+  res.render('kitchen');
   });
 
 /** Loads Manager page. */
 app.get('/manager', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/manager.html');
-  res.sendFile(path.join(__dirname+'/public/manager.html'));
+  res.render('manager');
   });
 
 /** Loads Manager edit menu page. */
 app.get('/manager-edit-menu', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/manager-edit-menu.html');
-  res.sendFile(path.join(__dirname+'/public/manager-edit-menu.html'));
+  res.render('manager-edit-menu');
   });
 
 /** Loads Manager edit user page. */
 app.get('/manager-users', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/manager-users.html');
-  res.sendFile(path.join(__dirname+'/public/manager-users.html'));
+  res.render('manager-users');
   });
-/** Loads Manager edit user page. */
-app.get('/config', function(req, res)
+
+/** Render Login page. */
+app.get('/login', function(req, res)
   {
-  console.log('serving '+__dirname+'/public/config.html');
-  res.sendFile(path.join(__dirname+'/public/config.html'));
+  res.render('login');
+  });
+
+/** Perform Login authentication. */
+app.post('/login', function(req, res)
+  {
+  //TEST VALUES FOR AUTHENTICATION. FOR SOME REASON HAVING ISSUES WITH PASSPORTS AUTHENTICATE METHOD...
+  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/kitchen'});
+  console.log('fml');
   });
 
 /*****************************************************************************
@@ -251,7 +302,7 @@ app.post('/postCreateOrder', function(req, res)
  * SQL
  ****************************************************************************/
 /** Database connection. */
-var mDBConn = null;
+var mDB = require('./db.js');
 
 /******************************************************************************
  * closeOrder *
@@ -265,21 +316,11 @@ function closeOrder(orderID, callBack)
   {
   var cmd = "UPDATE Orders SET Closed = 1 WHERE ID = "+orderID+";";
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd, function(err)
+  mDB.conn.query(cmd, function(err)
     {
     if(err) throw err;
     console.log(cmd);
@@ -287,28 +328,7 @@ function closeOrder(orderID, callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
-  }
-
-/******************************************************************************
- * createConnection *
- ***
- * Establish database connection.
- *****************************************************************************/
-function createConnection()
-  {
-  mDBConn = mysql.createConnection(
-    {
-      host    : "testdb3.cilqftni5rud.us-west-2.rds.amazonaws.com",
-      user    : "testuser3",
-      password: "Testuser3",
-      port    : "3306",
-      database: "DBMain",
-      multipleStatements: true
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -324,21 +344,11 @@ function createEmployee(employee, callBack)
   var cmd = "INSERT INTO Employees (FirstName, LastName, EmployeeNumber, EmployeeType) "+
     "VALUES ('"+employee.firstName+"', '"+employee.lastName+"', "+employee.employeeNumber+", '"+employee.employeeType+"');";
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd, function(err)
+  mDB.conn.query(cmd, function(err)
     {
     if(err) throw err;
     console.log(cmd);
@@ -346,10 +356,7 @@ function createEmployee(employee, callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -366,21 +373,11 @@ function createItem(item, callBack)
             "VALUES ('" + item.name + "', '"+ item.description + "', " + item.price +
             ", '" + item.type + "', '"+ item.sku +"', '"+item.barcode+"');";
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd, function(err)
+  mDB.conn.query(cmd, function(err)
     {
     if(err) throw err;
 
@@ -389,10 +386,7 @@ function createItem(item, callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -406,21 +400,11 @@ function getEmployees(callBack)
   {
   var cmd = "SELECT * FROM Employees";
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd ,function(err,rows)
+  mDB.conn.query(cmd ,function(err,rows)
     {
     if(err) throw err;
 
@@ -430,10 +414,7 @@ function getEmployees(callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -447,21 +428,12 @@ function getItems(callBack)
   {
   var cmd = "SELECT * FROM Items";
 
-  createConnection();
-
   /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd ,function(err,rows)
+  mDB.conn.query(cmd ,function(err,rows)
     {
     if(err) throw err;
 
@@ -471,10 +443,7 @@ function getItems(callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -486,7 +455,6 @@ function getItems(callBack)
  *****************************************************************************/
 function getOpenOrders(callBack)
   {
-
   var cmd =
     "SELECT o.ID AS OID, o.OrderNumber, o.TransactionType, li.ID AS LIID, i.Name\n" +
       "FROM Orders    o\n"                            +
@@ -494,21 +462,11 @@ function getOpenOrders(callBack)
       "JOIN Items     i  ON i .ID      = li.ItemID\n" +
       "WHERE Closed = 0;";
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmd ,function(err,rows)
+  mDB.conn.query(cmd ,function(err,rows)
     {
     if(err) throw err;
 
@@ -518,10 +476,7 @@ function getOpenOrders(callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -568,21 +523,11 @@ function saveOrder(order, callBack)
     cmdOrder += cmdItem;
     }
 
-  createConnection();
-
-  /** Connect to the db. */
-  mDBConn.connect(function(err)
-    {
-    if(err)
-      {
-      console.log('Error connecting to Db');
-      return;
-      }
-    console.log('Connection established');
-    });
+  mDB.establishConnection();
+  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
-  mDBConn.query(cmdOrder, function(err)
+  mDB.conn.query(cmdOrder, function(err)
     {
     console.log(cmdOrder);
 
@@ -592,10 +537,7 @@ function saveOrder(order, callBack)
     });
 
   /** Cleanup and close the connection. */
-  mDBConn.end(function(err)
-    {
-    console.log('Connection closed.');
-    });
+  mDB.conn.end();
   }
 
 /*****************************************************************************

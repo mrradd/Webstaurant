@@ -9,10 +9,11 @@
   <meta name="Team UAT">
 
   <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../public/css/pos/style.css" rel="stylesheet">
-
+  <link href="../views/css/pos/style.css" rel="stylesheet">
+  <script src="../node_modules/angular/angular.js"></script>
   <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="../public/js/pos/src.js"></script>
+  <script src="../node_modules/ejs/ejs.js"></script>
+  <script src="../views/js/pos/src.js"></script>
 </head>
 <body>
 <div class="POS">
@@ -46,21 +47,13 @@
     <div class="row">
       <div class="col-md-8">
         <h1 class="text-left">Point of Sale</h1>
-        <nav class="navbar navbar-default" role="navigation">
-          <!-- Search bar -->
-          <div class="navbar-header">
-            <button class="navbar-toggle" data-target="#bs-example-navbar-collapse-1" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#">Search Bar</a>
-          </div>
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <div class="nav navbar-nav" style="margin-left: 2em">
-              <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                  <input class="form-control" id="myInput" onkeyup="nav()" type="text">
-                </div><button class="btn btn-default" type="submit">Submit</button>
-              </form>
-            </div>
-          </div>
-        </nav>
+
+
+
+
+        <input class="form-control" id="myInput" onkeyup="nav()" type="text" placeholder="Search Item">
+
+
         <!-- Menu items. -->
         <div class="wrapper">
         <table class="tableSection table-hover" id="myTable">
