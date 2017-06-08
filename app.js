@@ -6,9 +6,11 @@ var http          = require('http');
 var ejs           = require('ejs')
 var path          = require('path');
 var mysql         = require('mysql');
+var mDB           = require('./db.js');
 var fs            = require('fs');
 var express       = require('express');
 var session       = require('express-session');
+var cookieParser  = require('cookie-parser');
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bodyParser    = require('body-parser');
@@ -20,44 +22,60 @@ app.use(express.static(__dirname));
 /** Setup ejs. */
 app.set('view engine', 'ejs');
 
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(session({ secret: 'secret strategic xxzzz code', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));
+
 /** Passport. */
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy(function(username, password, done)
+passport.serializeUser(function(user, done)
   {
-  return done(null, {});
-  // process.nextTick(function() {
-  // console.log('authenticating');
-  // const dbConn = require('./db.js');
-  //
-  // dbConn.query('SELECT * FROM Users WHERE Username = ? AND Password = ?', [username, password],
-  //   function(err, results, fields)
-  //   {
-  //   console.log('did query.');
-  //
-  //   if(error) throw error();
-  //   var user = fields[0];
-  //
-  //   if(valid == 1)
-  //     {
-  //     return done(null, user);
-  //     }
-  //
-  //   else
-  //     {
-  //     return done(null, false, { message: 'Invalid credentials.' });
-  //     }
-  //   });});
+  done(null, user.ID);
+  });
+
+passport.deserializeUser(function(id, done)
+  {
+  mDB.establishConnection();
+  mDB.conn.query("SELECT * FROM Users WHERE ID = ?", [id],function(err,rows)
+    {
+    mDB.conn.end();
+    done(err, rows[0]);
+    });
+  });
+
+passport.use('local', new LocalStrategy(function(username, password, done)
+  {
+  process.nextTick(function()
+    {
+    mDB.establishConnection();
+    mDB.conn.query('SELECT * FROM Users WHERE Username = ? AND Password = ?', [username, password],
+      function(err, results)
+      {
+      if (err) throw error();
+      var user = results[0];
+
+      if(!user)
+        return done(null, false, { message: 'Invalid username.' });
+      else if(user.Password != password)
+        return done(null, false, { message: 'Invalid password.' });
+
+      mDB.conn.end();
+
+      return done(null, user);
+      });
+    });
   }));
 
 /*****************************************************************************
  * Page loads
  ****************************************************************************/
-/** Initial page to load. Loads POS page. */
+/** Initial page to load. Loads login page. */
 app.get('/', function(req, res)
   {
-  res.render('pos');
+  res.render('login');
   });
 
 /** Loads Manager config page. */
@@ -90,18 +108,16 @@ app.get('/manager-users', function(req, res)
   res.render('manager-users');
   });
 
-/** Render Login page. */
-app.get('/login', function(req, res)
+/** Render POS page. */
+app.get('/pos', function(req, res)
   {
-  res.render('login');
+  res.render('pos');
   });
 
 /** Perform Login authentication. */
-app.post('/login', function(req, res)
+app.post('/login', function(req, res, next)
   {
-  //TEST VALUES FOR AUTHENTICATION. FOR SOME REASON HAVING ISSUES WITH PASSPORTS AUTHENTICATE METHOD...
-  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/kitchen'});
-  console.log('fml');
+  passport.authenticate('local', { successRedirect: '/pos', failureRedirect: '/'})(req, res, next);
   });
 
 /*****************************************************************************
@@ -301,9 +317,6 @@ app.post('/postCreateOrder', function(req, res)
 /*****************************************************************************
  * SQL
  ****************************************************************************/
-/** Database connection. */
-var mDB = require('./db.js');
-
 /******************************************************************************
  * closeOrder *
  ***
