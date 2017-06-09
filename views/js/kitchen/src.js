@@ -33,13 +33,16 @@ $(document).ready(function()
    ***************************************************************************/
   function completeOrder(orderID)
     {
+    var obj = {};
+    obj.orderID = orderID;
+
     $('.'+orderID).remove();
     $.ajax(
       {
         url        : 'http://localhost:3000/postCloseOrder',
         type       : 'POST',
         contentType: 'application/json',
-        data       : JSON.stringify(orderID)
+        data       : JSON.stringify(obj) //Sending object instead of value is a hack to force body-parser to accept JSON.
       });
     }
 
