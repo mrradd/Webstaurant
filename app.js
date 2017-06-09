@@ -11,6 +11,7 @@ var fs            = require('fs');
 var express       = require('express');
 var session       = require('express-session');
 var cookieParser  = require('cookie-parser');
+var flash         = require('connect-flash');
 var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bodyParser    = require('body-parser');
@@ -25,17 +26,36 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ secret: 'secret strategic xxzzz code', cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }));
+app.use(session(
+  {
+  secret: 'secret strategic xxzzz code',
+  cookie: { maxAge: 60000 },
+  resave: true,
+  saveUninitialized: true
+  }));
 
 /** Passport. */
 app.use(passport.initialize());
 app.use(passport.session());
 
+/** Setup Flash. */
+app.use(flash());
+
+/******************************************************************************
+ * serializeUser *
+ ***
+ * Serialized the user.
+ *****************************************************************************/
 passport.serializeUser(function(user, done)
   {
   done(null, user.ID);
   });
 
+/******************************************************************************
+ * deserializeUser *
+ ***
+ * Deserialize the user.
+ *****************************************************************************/
 passport.deserializeUser(function(id, done)
   {
   mDB.establishConnection();
@@ -46,23 +66,27 @@ passport.deserializeUser(function(id, done)
     });
   });
 
+/******************************************************************************
+ * Passport Local Strategy *
+ ***
+ * Define the Local Strategy for Passport.
+ *****************************************************************************/
 passport.use('local', new LocalStrategy(function(username, password, done)
   {
   process.nextTick(function()
     {
     mDB.establishConnection();
-    mDB.conn.query('SELECT * FROM Users WHERE Username = ? AND Password = ?', [username, password],
+    mDB.conn.query('SELECT * FROM Users WHERE Username = ?', [username, password],
       function(err, results)
       {
+      mDB.conn.end();
+
       if (err) throw error();
+
       var user = results[0];
 
       if(!user)
-        return done(null, false, { message: 'Invalid username.' });
-      else if(user.Password != password)
-        return done(null, false, { message: 'Invalid password.' });
-
-      mDB.conn.end();
+        return done(null, false);
 
       return done(null, user);
       });
@@ -75,7 +99,7 @@ passport.use('local', new LocalStrategy(function(username, password, done)
 /** Initial page to load. Loads login page. */
 app.get('/', function(req, res)
   {
-  res.render('login');
+  res.render('login', { message: req.flash('error') });
   });
 
 /** Loads Manager config page. */
@@ -115,10 +139,8 @@ app.get('/pos', function(req, res)
   });
 
 /** Perform Login authentication. */
-app.post('/login', function(req, res, next)
-  {
-  passport.authenticate('local', { successRedirect: '/pos', failureRedirect: '/'})(req, res, next);
-  });
+app.post('/login', passport.authenticate('local', { successRedirect: '/pos', failureRedirect: '/',
+  failureFlash: 'Username or Password invalid.'}));
 
 /*****************************************************************************
  * SQL Routes
