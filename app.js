@@ -13,7 +13,6 @@ var session       = require('express-session');
 var cookieParser  = require('cookie-parser');
 var flash         = require('connect-flash');
 var passport      = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var bodyParser    = require('body-parser');
 var app           = express();
 
@@ -29,7 +28,7 @@ app.use(bodyParser.json());
 app.use(session(
   {
   secret: 'secret strategic xxzzz code',
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 1000 },
   resave: true,
   saveUninitialized: true
   }));
@@ -41,106 +40,8 @@ app.use(passport.session());
 /** Setup Flash. */
 app.use(flash());
 
-/******************************************************************************
- * serializeUser *
- ***
- * Serialized the user.
- *****************************************************************************/
-passport.serializeUser(function(user, done)
-  {
-  done(null, user.ID);
-  });
-
-/******************************************************************************
- * deserializeUser *
- ***
- * Deserialize the user.
- *****************************************************************************/
-passport.deserializeUser(function(id, done)
-  {
-  mDB.establishConnection();
-  mDB.conn.query("SELECT * FROM Users WHERE ID = ?", [id],function(err,rows)
-    {
-    mDB.conn.end();
-    done(err, rows[0]);
-    });
-  });
-
-/******************************************************************************
- * Passport Local Strategy *
- ***
- * Define the Local Strategy for Passport.
- *****************************************************************************/
-passport.use('local', new LocalStrategy(function(username, password, done)
-  {
-  process.nextTick(function()
-    {
-    mDB.establishConnection();
-    mDB.conn.query('SELECT * FROM Users WHERE Username = ?', [username, password],
-      function(err, results)
-      {
-      mDB.conn.end();
-
-      if (err) throw error();
-
-      var user = results[0];
-
-      if(!user)
-        return done(null, false);
-
-      return done(null, user);
-      });
-    });
-  }));
-
-/*****************************************************************************
- * Page loads
- ****************************************************************************/
-/** Initial page to load. Loads login page. */
-app.get('/', function(req, res)
-  {
-  res.render('login', { message: req.flash('error') });
-  });
-
-/** Loads Manager config page. */
-app.get('/config', function(req, res)
-  {
-  res.render('config');
-  });
-
-/** Loads Kitchen page. */
-app.get('/kitchen', function(req, res)
-  {
-  res.render('kitchen');
-  });
-
-/** Loads Manager page. */
-app.get('/manager', function(req, res)
-  {
-  res.render('manager');
-  });
-
-/** Loads Manager edit menu page. */
-app.get('/manager-edit-menu', function(req, res)
-  {
-  res.render('manager-edit-menu');
-  });
-
-/** Loads Manager edit user page. */
-app.get('/manager-users', function(req, res)
-  {
-  res.render('manager-users');
-  });
-
-/** Render POS page. */
-app.get('/pos', function(req, res)
-  {
-  res.render('pos');
-  });
-
-/** Perform Login authentication. */
-app.post('/login', passport.authenticate('local', { successRedirect: '/pos', failureRedirect: '/',
-  failureFlash: 'Username or Password invalid.'}));
+require('./passport.js')(passport);
+require('./routes.js')(app);
 
 /*****************************************************************************
  * SQL Routes
@@ -170,8 +71,9 @@ app.get('/getEmployees', function(req, res)
  *****************************************************************************/
 app.get('/getItems', function(req, res)
   {
+  var items = require('./dba/items.js');
   console.log("start /getItems");
-  getItems(function(err, results)
+  items.getItems(function(err, results)
     {
     if(err)
       throw err;
@@ -208,28 +110,15 @@ app.post('/postCloseOrder', function(req, res)
   {
   console.log("start /postCloseOrder");
 
-  var body = '';
+  /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
+  if (req.body.length > 1e6)
+    req.connection.destroy();
 
-  /** Capture data from request. */
-  req.on('data', function (data)
+  closeOrder(req.body, function(err)
     {
-    body += data;
-
-    /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
-    if (body.length > 1e6)
-      req.connection.destroy();
-    });
-
-  /** Parse JSON data, and create item.*/
-  req.on('end', function ()
-    {
-    var obj = JSON.parse(body);
-    closeOrder(obj, function(err)
-      {
-      if(err)
-        throw err;
-      console.log("end /postCloseOrder");
-      });
+    if(err)
+      throw err;
+    console.log("end /postCloseOrder");
     });
   });
 
@@ -240,31 +129,20 @@ app.post('/postCloseOrder', function(req, res)
  *****************************************************************************/
 app.post('/postCreateEmployee', function(req, res)
   {
+
   console.log("start /postCreateEmployee");
 
-  var body = '';
+  /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
+  if (req.body.length > 1e6)
+    req.connection.destroy();
 
-  /** Capture data from request. */
-  req.on('data', function (data)
+  createEmployee(req.body, function(err)
     {
-    body += data;
-
-    /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
-    if (body.length > 1e6)
-      req.connection.destroy();
+    if(err)
+      throw err;
+    console.log("end /postCreateEmployee");
     });
 
-  /** Parse JSON data, and create item.*/
-  req.on('end', function ()
-    {
-    var obj = JSON.parse(body);
-    createEmployee(obj, function(err)
-      {
-      if(err)
-        throw err;
-      console.log("end /postCreateEmployee");
-      });
-    });
   });
 
 /******************************************************************************
@@ -274,30 +152,19 @@ app.post('/postCreateEmployee', function(req, res)
  *****************************************************************************/
 app.post('/postCreateItem', function(req, res)
   {
+  var items = require('./dba/items.js');
+
   console.log("start /postCreateItem");
-  var body = '';
 
-  /** Capture data from request. */
-  req.on('data', function (data)
+  if (req.body.length > 1e6)
+    req.connection.destroy();
+
+  items.createItem(req.body, function(err)
     {
-    body += data;
+    if(err)
+      throw err;
 
-    /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
-    if (body.length > 1e6)
-      req.connection.destroy();
-    });
-
-  /** Parse JSON data, and create item.*/
-  req.on('end', function ()
-    {
-    var obj = JSON.parse(body);
-    createItem(obj, function(err)
-      {
-      if(err)
-        throw err;
-
-      console.log("end /postCreateItem");
-      });
+    console.log("end /postCreateItem");
     });
   });
 
@@ -310,30 +177,18 @@ app.post('/postCreateOrder', function(req, res)
   {
   console.log("start /postCreateOrder");
 
-  var body = '';
+  /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
+  if (req.body.length > 1e6)
+    req.connection.destroy();
 
-  /** Capture data from request. */
-  req.on('data', function (data)
+  saveOrder(req.body, function(err)
     {
-    body += data;
+    if(err)
+      throw err;
 
-    /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
-    if (body.length > 1e6)
-      req.connection.destroy();
+    console.log("end /postCreateOrder");
     });
 
-  /** Parse JSON data, and create item.*/
-  req.on('end', function ()
-    {
-    var obj = JSON.parse(body);
-    saveOrder(obj, function(err)
-      {
-      if(err)
-        throw err;
-
-      console.log("end /postCreateOrder");
-      });
-    });
   });
 
 /*****************************************************************************
@@ -395,35 +250,6 @@ function createEmployee(employee, callBack)
   }
 
 /******************************************************************************
- * createItem *
- ***
- * Submits item detail to the database to create an Item entry.
- *
- * @param  item      Item to use to create the new Item record.
- * @param  callBack  Callback function to handle response from database call.
- *****************************************************************************/
-function createItem(item, callBack)
-  {
-  var cmd   = "INSERT INTO Items (Name, Description, Price, Type, SKU, BarCode) VALUES (?,?,?,?,?,?)";
-  var parms = [item.name, item.description, item.price, item.type, item.sku, item.barcode];
-
-  mDB.establishConnection();
-  mDB.conn.connect();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, parms, function(err)
-    {
-    if(err) throw err;
-
-    console.log(cmd);
-    callBack(err);
-    });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
-  }
-
-/******************************************************************************
  * getEmployees *
  ***
  * Gets all Employees from the database.
@@ -434,35 +260,6 @@ function getEmployees(callBack)
   {
   var cmd = "SELECT * FROM Employees";
 
-  mDB.establishConnection();
-  mDB.conn.connect();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd ,function(err,rows)
-    {
-    if(err) throw err;
-
-    console.log(cmd + "\n");
-    console.log(rows);
-    callBack(err, rows);
-    });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
-  }
-
-/******************************************************************************
- * getItems *
- ***
- * Gets all items from the database.
- *
- * @param  callBack  Callback function to handle response from database call.
- *****************************************************************************/
-function getItems(callBack)
-  {
-  var cmd = "SELECT * FROM Items";
-
-  /** Connect to the db. */
   mDB.establishConnection();
   mDB.conn.connect();
 
