@@ -15,10 +15,15 @@ module.exports = function(passport)
   passport.deserializeUser(function(id, done)
     {
     mDB.establishConnection();
-    mDB.conn.query("SELECT * FROM Users WHERE ID = ?", [id],function(err,rows)
+    mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id],function(err,rows)
       {
       mDB.conn.end();
-      done(err, rows[0]);
+
+      if (err) throw err;
+
+      var user = rows[0];
+
+      done(err, user);
       });
     });
 
@@ -42,12 +47,13 @@ module.exports = function(passport)
     process.nextTick(function()
       {
       mDB.establishConnection();
-      mDB.conn.query('SELECT * FROM Users WHERE Username = ?', [username, password],
+
+      mDB.conn.query('SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID  WHERE u.Username = ? AND u.Password = ?;', [username, password],
         function(err, results)
         {
         mDB.conn.end();
 
-        if (err) throw error();
+        if (err) throw err;
 
         var user = results[0];
 

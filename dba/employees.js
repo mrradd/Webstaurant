@@ -20,7 +20,6 @@ employees.createEmployee = function createEmployee(employee, callBack)
   var parms = [employee.firstName, employee.lastName, employee.employeeNumber, employee.employeeType];
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd, parms, function(err)
@@ -46,7 +45,6 @@ employees.getEmployees = function getEmployees(callBack)
   var cmd = "SELECT * FROM Employees";
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd ,function(err,rows)

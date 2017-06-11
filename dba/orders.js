@@ -20,7 +20,6 @@ orders.closeOrder = function (orderID, callBack)
   var cmd = "UPDATE Orders SET Closed = 1 WHERE ID = ?;";
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd, [orderID], function(err)
@@ -51,20 +50,19 @@ orders.getOpenOrders = function (callBack)
     "WHERE Closed = 0;";
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd ,function(err,rows)
     {
+    /** Cleanup and close the connection. */
+    mDB.conn.end();
+
     if(err) throw err;
 
     console.log(cmd + "\n");
     console.log(rows);
     callBack(err, rows);
     });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
   }
 
 /******************************************************************************
@@ -79,7 +77,6 @@ orders.saveOrder = function(order, callBack)
   {
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   var orderID = 0;
 

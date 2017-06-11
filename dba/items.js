@@ -20,7 +20,6 @@ items.createItem = function (item, callBack)
   var parms = [item.name, item.description, item.price, item.type, item.sku, item.barcode];
 
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd, parms, function(err)
@@ -48,7 +47,6 @@ items.getItems = function(callBack)
 
   /** Connect to the db. */
   mDB.establishConnection();
-  mDB.conn.connect();
 
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd, function(err, rows)

@@ -14,6 +14,7 @@ var cookieParser  = require('cookie-parser');
 var flash         = require('connect-flash');
 var passport      = require('passport');
 var bodyParser    = require('body-parser');
+var morgan        = require('morgan');
 var app           = express();
 
 /** Establish root directory. */
@@ -31,9 +32,10 @@ app.use(bodyParser.json());
 app.use(session(
   {
   secret: 'secret strategic xxzzz code',
-  cookie: { maxAge: 1000 },
-  resave: true,
-  saveUninitialized: true
+  cookie: { maxAge: 1000 * 60 * 10, secure:false },
+  resave: false,
+  httpOnly: true,
+  saveUninitialized: false
   }));
 
 /** Passport. */
@@ -42,6 +44,9 @@ app.use(passport.session());
 
 /** Setup Flash. */
 app.use(flash());
+
+/** Use morgan to log requests to the console. */
+app.use(morgan('dev'));
 
 /** Setup needed modules. */
 require('./passport.js')(passport);

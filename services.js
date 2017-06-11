@@ -54,7 +54,6 @@ module.exports = function(app)
    *****************************************************************************/
   app.get('/getOpenOrders', function(req, res)
     {
-
     console.log("start /getOpenOrders");
     orders.getOpenOrders(function(err, results)
       {
@@ -154,4 +153,5 @@ module.exports = function(app)
       console.log("end /postCreateOrder");
       });
     });
+
   };
