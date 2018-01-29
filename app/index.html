@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css"></link>
+    <link rel="stylesheet" href="../app/styles.css"></link>
+  </head>
+  <body>
+
+    <div ng-app="app">
+      <header></header>
+      <div ng-view></div>
+    </div>
+
+    <script type="text/javascript" src="../node_modules/angular/angular.js"></script>
+    <script type="text/javascript" src="../node_modules/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+
+    <script type="text/javascript" src="../app/mainApp.js"></script>
+    <script type="text/javascript" src="../app/elements/header/header.js"></script>
+    <script type="text/javascript" src="../app/routes/login/login.js"></script>
+    <script type="text/javascript" src="../app/routes/pos/pos.js"></script>
+    <script type="text/javascript" src="../app/routes/kitchen/kitchen.js"></script>
+    <script type="text/javascript" src="../app/routes/manager/manager.js"></script>
+  </body>
+</html>

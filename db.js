@@ -5,19 +5,20 @@
 /*****************************************************************************
  * MySQL Connection info. *
  *****************************************************************************/
-var mysql = require('mysql');
-var db    = {};
-db.conn   = null;
+var mysql  = require('mysql');
+var config = require('./config.js');
+var db     = {};
+db.conn    = null;
 db.establishConnection = function()
   {
   db.conn = mysql.createConnection(
     {
-    host    : "testdb3.cilqftni5rud.us-west-2.rds.amazonaws.com",
-    user    : "testuser3",
-    password: "Testuser3",
-    port    : "3306",
-    database: "DBMain",
-    multipleStatements: true
+    host    : config.db.host,
+    user    : config.db.user,
+    password: config.db.password,
+    port    : config.db.port,
+    database: config.db.database,
+    multipleStatements: config.db.multipleStatements
     });
   }
 

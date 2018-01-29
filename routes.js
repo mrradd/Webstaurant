@@ -17,7 +17,7 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    res.render('login', { message: '' });
+    res.sendfile('./app/index.html');
     });
 
   /** Loads Manager config page. */
@@ -40,7 +40,7 @@ module.exports = function(app)
       if(pass)
         res.render('kitchen');
       else
-        res.redirect('/');
+        res.redirect('/config');
       });
     });
 
@@ -52,7 +52,7 @@ module.exports = function(app)
       if(pass)
         res.render('manager');
       else
-        res.redirect('/');
+        res.redirect('/config');
       });
     });
 
@@ -64,7 +64,7 @@ module.exports = function(app)
       if(pass)
         res.render('manager-edit-menu');
       else
-        res.redirect('/');
+        res.redirect('/config');
       });
     });
 
@@ -76,7 +76,7 @@ module.exports = function(app)
       if(pass)
         res.render('manager-users');
       else
-        res.redirect('/');
+        res.redirect('/config');
       });
     });
 
@@ -88,7 +88,7 @@ module.exports = function(app)
       if(pass)
         res.render('pos');
       else
-        res.redirect('/');
+        res.redirect('/config');
       });
     });
 

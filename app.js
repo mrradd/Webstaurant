@@ -3,7 +3,6 @@
  * The main app for the server.
  ****************************************************************************/
 var http          = require('http');
-var ejs           = require('ejs')
 var path          = require('path');
 var mysql         = require('mysql');
 var mDB           = require('./db.js');
@@ -11,17 +10,14 @@ var fs            = require('fs');
 var express       = require('express');
 var session       = require('express-session');
 var cookieParser  = require('cookie-parser');
-var flash         = require('connect-flash');
 var passport      = require('passport');
 var bodyParser    = require('body-parser');
 var morgan        = require('morgan');
+var config        = require('./config.js');
 var app           = express();
 
 /** Establish root directory. */
 app.use(express.static(__dirname));
-
-/** Setup ejs. */
-app.set('view engine', 'ejs');
 
 /** Setup parsers. */
 app.use(cookieParser());
@@ -31,19 +27,16 @@ app.use(bodyParser.json());
 /** Setup the session. */
 app.use(session(
   {
-  secret: 'secret strategic xxzzz code',
-  cookie: { maxAge: 1000 * 60 * 10, secure:false },
-  resave: false,
-  httpOnly: true,
-  saveUninitialized: false
+  secret: config.session.secret,
+  cookie: config.session.cookie,
+  resave: config.session.resave,
+  httpOnly: config.session.httpOnly,
+  saveUninitialized: config.session.saveUninitialized
   }));
 
 /** Passport. */
 app.use(passport.initialize());
 app.use(passport.session());
-
-/** Setup Flash. */
-app.use(flash());
 
 /** Use morgan to log requests to the console. */
 app.use(morgan('dev'));

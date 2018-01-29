@@ -15,7 +15,7 @@ module.exports = function(passport)
   passport.deserializeUser(function(id, done)
     {
     mDB.establishConnection();
-    mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id],function(err,rows)
+    mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id], function(err,rows)
       {
       mDB.conn.end();
 

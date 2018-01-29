@@ -5,19 +5,12 @@
   <link href="../views/css/login/style.css" rel="stylesheet">
 
   <script src="../node_modules/angular/angular.js"></script>
-  <script src="../node_modules/ejs/ejs.js"></script>
 </head>
 <body>
 
   <div class="login">
 
     <h1>Webstaurant</h1>
-
-    <!-- Flash message for login error. -->
-    <% if ( message.length > 0 ){ %>
-    <h4><%= message %></h4>
-    <% } %>
-
     <form method="post" action="/login">
       <input type="text" name="username" placeholder="Username" required="required"><br>
       <input type="password" name="password" placeholder="Password" required="required"><br>
