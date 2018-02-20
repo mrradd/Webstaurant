@@ -2,6 +2,7 @@
  * routes *
  * Server routes.
  ****************************************************************************/
+var path         = require('path');
 var passport     = require('passport');
 var validateUser = require('./dba/validateuser.js');
 
@@ -17,16 +18,18 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    res.sendfile('./app/index.html');
+    console.log('serving ' + __dirname + '/views/login.html');
+    res.sendFile(path.join(__dirname +'/views/login.html'));
     });
 
   /** Loads Manager config page. */
   app.get('/config', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/config.html');
     validateUser.validateType(req, [etWaiter, etManager, etCook], function(pass)
       {
       if(pass)
-        res.render('config');
+        res.sendFile(path.join(__dirname +'/views/config.html'));
       else
         res.redirect('/');
       });
@@ -35,10 +38,11 @@ module.exports = function(app)
   /** Loads Kitchen page. */
   app.get('/kitchen', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/kitchen.html');
     validateUser.validateType(req, [etManager, etCook], function(pass)
       {
       if(pass)
-        res.render('kitchen');
+        res.sendFile(path.join(__dirname +'/views/kitchen.html'));
       else
         res.redirect('/config');
       });
@@ -47,34 +51,37 @@ module.exports = function(app)
   /** Loads Manager page. */
   app.get('/manager', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/manager.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.render('manager');
+        res.sendFile(path.join(__dirname +'/views/manager.html'));
       else
         res.redirect('/config');
       });
     });
 
   /** Loads Manager edit menu page. */
-  app.get('/manager-edit-menu', function(req, res)
+  app.get('/editMenu', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/editMenu.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.render('manager-edit-menu');
+        res.sendFile(path.join(__dirname +'/views/editMenu.html'));
       else
         res.redirect('/config');
       });
     });
 
   /** Loads Manager edit user page. */
-  app.get('/manager-users', function(req, res)
+  app.get('/users', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/users.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.render('manager-users');
+        res.sendFile(path.join(__dirname +'/views/users.html'));
       else
         res.redirect('/config');
       });
@@ -83,10 +90,11 @@ module.exports = function(app)
   /** Render POS page. */
   app.get('/pos', function(req, res)
     {
+    console.log('serving ' + __dirname + '/views/pos.html');
     validateUser.validateType(req, [etWaiter, etManager], function(pass)
       {
       if(pass)
-        res.render('pos');
+        res.sendFile(path.join(__dirname +'/views/pos.html'));
       else
         res.redirect('/config');
       });

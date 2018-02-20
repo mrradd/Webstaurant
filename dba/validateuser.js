@@ -16,6 +16,7 @@ var validateUser = {};
  ****************************************************************************/
 validateUser.validateType = function(req, types, callback)
   {
+  //TODO CH  uncomment
   // mDB.establishConnection();
   //
   // var cmd    = 'SELECT * FROM Sess WHERE SessionID = ?';
@@ -39,6 +40,7 @@ validateUser.validateType = function(req, types, callback)
   //
   //   callback(pass);
   //   });
-  }
+  callback(true);
+  };
 
 module.exports = validateUser;

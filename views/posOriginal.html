@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <title>POS | Webstaurant</title>
+  <meta content="Food" name="Point of Sale">
+  <meta name="Team UAT">
+
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <link href="../views/css/pos/style.css" rel="stylesheet">
+  <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/ejs/ejs.js"></script>
+  <script src="../views/js/pos/src.js"></script>
+</head>
+<body>
+<div class="POS">
+
+  <!--
+  *************** Navigation *****************
+     This is a temporary Navigation Menu!
+     The navigation will remain until an
+     authentication system is developed.
+  -->
+
+  <nav role="navigation" class="nav">
+    <ul class="nav-items">
+      <li class="nav-item">
+        <a href="/pos" class="nav-link"><span>Point of Sale</span></a>
+      </li>
+      <li class="nav-item">
+        <a href="manager" class="nav-link"><span>Manager</span></a>
+      </li>
+      <li class="nav-item">
+        <a href="kitchen" class="nav-link"><span>Kitchen View</span></a>
+      </li>
+    </ul>
+  </nav>
+
+  <!--
+  ************ End of Navigation ***************
+  -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <h1 class="text-left">Point of Sale</h1>
+
+        <input class="form-control" id="myInput" onkeyup="nav()" type="text" placeholder="Search Item">
+
+
+        <!-- Menu items. -->
+        <div class="wrapper">
+        <table class="tableSection table-hover" id="myTable">
+          <thead>
+          <tr>
+            <!--th>ID</th-->
+            <th>Item</th>
+            <th>Price</th>
+          </tr>
+          </thead>
+          <tbody id="menuList"></tbody>
+        </table>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <!-- List of items ordered -->
+        <h3>Order List</h3>
+        <table class="tableSection" id="theOrderList">
+          <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Notes</th>
+          </tr>
+          </thead>
+          <tbody id="orderList"></tbody>
+        </table>
+
+
+
+        <!-- Delete entire order button -->
+        <button class="btn btn-block btn-danger" id="btnDelete" type="button">Delete Order</button>
+        <!-- Payment button -->
+        <button class="btn btn-block btn-success" id="btnAddOrder" type="button">Submit Order</button>
+      </div>
+    </div>
+  </div>
+  <script>
+      function nav() {
+          // Declare variables
+          var input, filter, table, tr, td, i;
+          input = document.getElementById("myInput");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("myTable");
+          tr = table.getElementsByTagName("tr");
+
+          // Loop through all table rows, and hide those who don't match the search query
+          for (i = 0; i < tr.length; i++) {
+              td = tr[i].getElementsByTagName("td")[0];
+              if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                      tr[i].style.display = "";
+                  } else {
+                      tr[i].style.display = "none";
+                  }
+              }
+          }
+      }
+  </script>
+
+
+</div>
+</body>
+</html>

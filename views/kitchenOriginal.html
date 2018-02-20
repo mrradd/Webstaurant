@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Kitchen | Webstaurant</title>
+
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../views/css/kitchen/style.css" rel="stylesheet">
+  <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/ejs/ejs.js"></script>
+  <script src="../views/js/kitchen/src.js"></script>
+</head>
+<body>
+
+<div class="kitchen">
+    <!--
+ *************** Navigation *****************
+    This is a temporary Navigation Menu!
+    The navigation will remain until an
+    authentication system is developed.
+ -->
+
+    <nav role="navigation" class="nav">
+        <ul class="nav-items">
+            <li class="nav-item">
+                <a href="/pos" class="nav-link"><span>Point of Sale</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="manager" class="nav-link"><span>Manager</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="kitchen" class="nav-link"><span>Kitchen View</span></a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <!--
+    ************ End of Navigation ***************
+    -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-center text-muted">
+                Kitchen Order Preview
+            </h3>
+            <!--button type="button" class="btn btn-danger btn-default">
+                Reject Order
+            </button-->
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Product
+                    </th>
+                    <th>
+                        Notes
+                    </th>
+                    <th>
+                        Dine in/Dine out
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="orderList"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
