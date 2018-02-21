@@ -2,19 +2,72 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <title>POS | Webstaurant</title>
-  <meta content="Food" name="Point of Sale">
-  <meta name="Team UAT">
 
   <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-  <link href="../views/css/pos/style.css" rel="stylesheet">
 
 </head>
-<body>
+<body style="background-color: darkgray">
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a href="pos"><span>Point of Sale</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="manager"><span>Manager</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="kitchen"><span>Kitchen View</span></a>
+    </li>
+  </ul>
+
   <div ng-app="app" ng-controller="POSController">
-    {{data.test}}
+
+    <div class="container" style="background-color: white; border-radius:10px">
+
+      <!--Order Table-->
+      <div class="row">
+        <div class="col-sm-12">
+          <h2>Order Items</h2>
+          <table class="table table-striped table-bordered">
+            <tr>
+              <th width="300px">Item</th>
+              <th width="150px">Price</th>
+              <th width="50px"></th>
+            </tr>
+            <tr ng-repeat="item in data.orderItems">
+              <td ng-bind="item.name" style="text-align: center"></td>
+              <td ng-bind="item.price | currency" style="text-align: center"></td>
+              <td><button class="btn btn-danger" ng-click="removeOrderItem(item)">-</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <hr>
+
+      <!--Menu Table-->
+      <div class="row">
+        <div class="col-sm-12">
+          <h2>Menu Items</h2>
+
+          <input class="form-control" ng-model="data.menuFilter" placeholder="Search Item">
+          <table class="table table-striped table-bordered">
+            <tr>
+              <th width="300px">Item</th>
+              <th width="150px">Price</th>
+              <th width="50px"></th>
+            </tr>
+            <tr ng-repeat="item in data.menuItems | filter: data.menuFilter">
+              <td ng-bind="item.name" style="text-align: center"></td>
+              <td ng-bind="item.price | currency" style="text-align: center"></td>
+              <td><button class="btn btn-success" ng-click="addToItemOrder(item)">+</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <script src="../node_modules/angular/angular.js"></script>

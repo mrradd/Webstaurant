@@ -61,7 +61,7 @@ module.exports = function(app)
       });
     });
 
-  /** Loads Manager edit menu page. */
+  /** Loads Edit Menu page. */
   app.get('/editMenu', function(req, res)
     {
     console.log('serving ' + __dirname + '/views/editMenu.html');
@@ -74,7 +74,7 @@ module.exports = function(app)
       });
     });
 
-  /** Loads Manager edit user page. */
+  /** Loads Edit User page. */
   app.get('/users', function(req, res)
     {
     console.log('serving ' + __dirname + '/views/users.html');
