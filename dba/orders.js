@@ -4,6 +4,7 @@
  ****************************************************************************/
 var mDB    = require('../db.js');
 var utils  = require('../utils.js');
+var config = require('../config.js');
 
 var orders = {};
 
@@ -117,7 +118,7 @@ orders.saveOrder = function(order, callBack)
         //TODO CH  TAX RATE, QUANTITY, DISCOUNT, AND DISCOUNT AMOUNT MUST BE DYNAMIC FROM INCOMING ORDER.
         var qty      = 1;
         var subTotal = utils.round(items[i].Price * qty, 2);
-        var taxRate  = 0.0875;
+        var taxRate  = config.app.tax;
         var taxAmt   = utils.round(subTotal * taxRate, 2);
         var total    = subTotal + taxAmt;
 
