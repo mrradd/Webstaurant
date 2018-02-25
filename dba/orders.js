@@ -111,13 +111,12 @@ orders.saveOrder = function(order, callBack)
       orderID = rows[0].OrderID;
 
       /** Iterate through all items, and create the sql command for saving each order line item. */
-      var items      = order['items'];
-      var itemParms  = [];
-      var cmdItem    = "";
+      var items   = order['items'];
+      var cmdItem = "";
 
       for(var i = 0; i < items.length; i++)
         {
-        //TODO CH  load tax rate, discount, discount amount dynamicaly from incoming order.
+        //TODO CH  load tax rate, discount, discount amount dynamically from incoming order.
         var qty      = 1;
         var subTotal = utils.round(items[i].Price * qty, 2);
         var taxRate  = config.app.tax;
@@ -126,17 +125,21 @@ orders.saveOrder = function(order, callBack)
 
         cmdItem +=
           "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
-          "VALUES (?,?,?,?,?,?,?,?,?,?);\n";
-
-        var itemParms = [items[i].ID, orderID, items[i].Price, qty, 0, 0, items[i].Price, taxRate, taxAmt, total];
-
-        itemParms.concat(itemParms);
+          "VALUES (" +
+          mDB.conn.escape(items[i].ID)          + "," +
+          mDB.conn.escape(orderID)              + "," +
+          mDB.conn.escape(items[i].Price)       + "," +
+          mDB.conn.escape(qty)                  + ",0,0," +
+          mDB.conn.escape(items[i].Price * qty) + "," +
+          mDB.conn.escape(taxRate)              + "," +
+          mDB.conn.escape(taxAmt)               + "," +
+          mDB.conn.escape(total)                + ");\n";
         }
 
-      console.log(cmdItem + "\n");
+      console.log(cmdItem);
 
       /** Save order items. */
-      mDB.conn.query(cmdItem, itemParms, function(err)
+      mDB.conn.query(cmdItem, function(err)
         {
         if(err) throw err;
 

@@ -81,6 +81,7 @@
     function deleteAllOrderItems()
       {
       $scope.data.orderGrid.data = [];
+      totalUp();
       }
 
     /**************************************************************************
