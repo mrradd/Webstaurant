@@ -1,0 +1,10 @@
+body{
+  background-color: darkgray
+}
+
+.stdContainer {
+  background-color: white;
+  border-radius:10px;
+  margin-right: 15px;
+  margin-left: 15px
+}

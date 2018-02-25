@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+
+  <title>Users | Webstaurant</title>
+  <meta content="POS" name="Point of Sale">
+  <meta name="Team UAT">
+
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css">
+  <link rel="stylesheet" href="../views/css/css.css">
+</head>
+
+<body>
+
+  <div ng-app="app" ng-controller="EmployeesController">
+    <header></header>
+    <div class="stdContainer container" style="margin-left:50px">
+      <div class="row">
+        <div class="col-md-offset-5 col-sm-12">
+          <h2>Edit Employees</h2>
+        </div>
+      </div>
+      
+      <div class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label>First Name</label>
+            <input class="form-control" ng-model="data.firstName">
+          </div>
+
+          <div class="col-sm-12">
+            <label>Last Name</label>
+            <input class="form-control" ng-model="data.lastName">
+          </div>
+
+          <div class="col-sm-12">
+            <label>Employee Number</label>
+            <input class="form-control" ng-model="data.number">
+          </div>
+        </div>
+      </div>
+
+      <div class="row" >
+        <div ui-grid="data.employeesGrid" class="grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
+  <script src="../views/js/mainApp.js"></script>
+  <script src="../views/js/header.js"></script>
+  <script src="../views/js/utils.js"></script>
+  <script src="../views/js/theService.js"></script>
+
+  <script src="../views/js/employees.js"></script>
+</body>
+</html>

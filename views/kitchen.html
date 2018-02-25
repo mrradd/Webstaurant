@@ -2,21 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Kitchen | Webstaurant</title>
 
-  <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../views/css/kitchen/style.css" rel="stylesheet">
+  <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css">
+  <link rel="stylesheet" href="../views/css/css.css">
 </head>
 <body>
   <div ng-app="app" ng-controller="KitchenController">
-    {{data.test}}
+    <header></header>
+    <div class="stdContainer ">
+      <div class="row" style="margin: 15px 15px 15px 15px">
+        <div class="col-sm-12">
+        <div ui-grid="data.ordersGrid" class="grid"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="col-sm-offset-5 col-sm-3" style="margin-bottom: 15px">
+            <button class="btn btn-lg btn-warning" ng-click="loadOpenOrders()">Reload Items</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
   <script src="../views/js/mainApp.js"></script>
+  <script src="../views/js/header.js"></script>
+  <script src="../views/js/utils.js"></script>
+  <script src="../views/js/theService.js"></script>
+
   <script src="../views/js/kitchen.js"></script>
 </body>
 </html>

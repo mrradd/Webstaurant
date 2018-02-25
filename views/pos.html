@@ -5,14 +5,15 @@
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <title>POS | Webstaurant</title>
 
-  <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-  <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css"></link>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css">
+  <link rel="stylesheet" href="../views/css/css.css">
 </head>
-<body style="background-color: darkgray">
+<body>
   <div ng-app="app" ng-controller="POSController">
     <header></header>
 
-    <div style="background-color: white; border-radius:10px; margin-right: 15px; margin-left: 15px">
+    <div class="stdContainer">
 
       <div class="row" style="margin-left: 15px; margin-right: 15px;">
         <!--Menu Table-->
@@ -57,7 +58,7 @@
             <div class="form-horizontal">
               <div class="form-group">
                 <div class="col-sm-offset-5 col-md-2 col-sm-2">
-                  <button class="btn btn-success" ng-click="submitOrder()">Submit Order</button>
+                  <button class="btn btn-lg btn-success" ng-click="submitOrder()">Submit Order</button>
                 </div>
               </div>
             </div>
@@ -70,8 +71,10 @@
   <script src="../node_modules/angular/angular.js"></script>
   <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
   <script src="../views/js/mainApp.js"></script>
-  <script src="../views/js/pos.js"></script>
   <script src="../views/js/header.js"></script>
+  <script src="../views/js/utils.js"></script>
   <script src="../views/js/theService.js"></script>
+
+  <script src="../views/js/pos.js"></script>
 </body>
 </html>

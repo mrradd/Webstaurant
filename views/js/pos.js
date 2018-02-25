@@ -101,7 +101,7 @@
             },
           function fail(res)
             {
-            alert("Failed to load menu items");
+            alert("Failed to load Menu Items.");
             });
       };
 
@@ -112,8 +112,7 @@
      *************************************************************************/
     $scope.removeOrderItem = function(item)
       {
-      var i = $scope.data.orderGrid.data.indexOf(item);
-      $scope.data.orderGrid.data.splice(i, 1);
+      $scope.data.orderGrid.data.removeItem(item);
       totalUp();
       };
 

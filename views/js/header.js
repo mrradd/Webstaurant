@@ -7,11 +7,11 @@
   var temp =
     "<div class='col-sm-offset-2 col-md-offset-4'>" +
       "<ul class='nav nav-pills'>" +
-        "<li class='nav-item'><a href='pos'><span>Point of Sale</span></a></li>" +
-        "<li class='nav-item'><a href='kitchen'><span>Kitchen View</span></a></li>" +
-        "<li class='nav-item'><a href='metrics'><span>Metrics</span></a></li>" +
-        "<li class='nav-item'><a href='editMenu'><span>Edit Menu</span></a></li>" +
-        "<li class='nav-item'><a href='users'><span>Edit Personnel</span></a></li>" +
+        "<li class='nav-item'><a href='pos'><span>Point of Sale</span></a></li>"   +
+        "<li class='nav-item'><a href='kitchen'><span>Kitchen</span></a></li>"     +
+        "<li class='nav-item'><a href='metrics'><span>Metrics</span></a></li>"     +
+        "<li class='nav-item'><a href='editMenu'><span>Menu</span></a></li>"       +
+        "<li class='nav-item'><a href='employees'><span>Employees</span></a></li>" +
       "</ul>" +
     "</div>"
 

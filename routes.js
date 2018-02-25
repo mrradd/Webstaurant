@@ -18,8 +18,9 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/login.html');
-    res.sendFile(path.join(__dirname +'/views/login.html'));
+    // console.log('serving ' + __dirname + '/views/login.html');
+    // res.sendFile(path.join(__dirname +'/views/login.html'));
+    res.sendFile(path.join(__dirname +'/views/employees.html'));
     });
 
   /** Loads Manager config page. */
@@ -75,13 +76,13 @@ module.exports = function(app)
     });
 
   /** Loads Edit User page. */
-  app.get('/users', function(req, res)
+  app.get('/employees', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/users.html');
+    console.log('serving ' + __dirname + '/views/employees.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.sendFile(path.join(__dirname +'/views/users.html'));
+        res.sendFile(path.join(__dirname +'/views/employees.html'));
       else
         res.redirect('/config');
       });
