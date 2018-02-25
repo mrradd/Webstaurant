@@ -9,19 +9,8 @@
   <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css"></link>
 </head>
 <body style="background-color: darkgray">
-  <ul class="nav nav-pills">
-    <li class="nav-item">
-      <a href="pos"><span>Point of Sale</span></a>
-    </li>
-    <li class="nav-item">
-      <a href="manager"><span>Metrics</span></a>
-    </li>
-    <li class="nav-item">
-      <a href="kitchen"><span>Kitchen View</span></a>
-    </li>
-  </ul>
-
   <div ng-app="app" ng-controller="POSController">
+    <header></header>
 
     <div style="background-color: white; border-radius:10px; margin-right: 15px; margin-left: 15px">
 
@@ -83,6 +72,7 @@
   <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
   <script src="../views/js/mainApp.js"></script>
   <script src="../views/js/pos.js"></script>
+  <script src="../views/js/header.js"></script>
   <script src="../views/js/theService.js"></script>
 </body>
 </html>

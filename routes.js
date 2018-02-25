@@ -48,14 +48,14 @@ module.exports = function(app)
       });
     });
 
-  /** Loads Manager page. */
-  app.get('/manager', function(req, res)
+  /** Loads Metrics page. */
+  app.get('/metrics', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/manager.html');
+    console.log('serving ' + __dirname + '/views/metrics.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.sendFile(path.join(__dirname +'/views/manager.html'));
+        res.sendFile(path.join(__dirname +'/views/metrics.html'));
       else
         res.redirect('/config');
       });
