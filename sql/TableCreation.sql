@@ -77,3 +77,10 @@ CREATE TABLE LineItems
   CONSTRAINT FK_LineItems_ItemID FOREIGN KEY (ItemID) REFERENCES Items (ID)
   );
 
+CREATE TABLE Sess
+  (
+  SessionID VARCHAR(500),
+  UserID    BIGINT,
+  EmployeeType VARCHAR(100)
+  );
+

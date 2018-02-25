@@ -76,7 +76,6 @@ orders.getOpenOrders = function (callBack)
  *****************************************************************************/
 orders.saveOrder = function(order, callBack)
   {
-
   mDB.establishConnection();
 
   var orderID = 0;
@@ -89,11 +88,11 @@ orders.saveOrder = function(order, callBack)
     return Math.floor(Math.random() * (max - min)) + min;
     }
 
-  //TODO CH  ORDER NUMBER MUST BE DYNAMIC FROM ORDER.
+  //TODO CH  order loads dynamically.
   /** Create the sql command for creating the order, and saving the most recent order id. */
   var ord        = order['order'];
-  var ordNum     = getRandomInt(1,999);
-  var orderParms = [ord.date,ord.employeeID,ordNum, ord.paid,ord.closed,ord.transactionType];
+  var ordNum     = getRandomInt(1,10000);
+  var orderParms = [ord.date, ord.employeeID, ordNum, ord.paid, ord.closed, ord.transactionType];
   var orderCmd   =
     "INSERT INTO Orders (Date, EmployeeID, OrderNumber, Paid, Closed, TransactionType)\n" +
     "VALUES(?,?,?,?,?,?); SET @LastID = LAST_INSERT_ID();";
@@ -102,6 +101,9 @@ orders.saveOrder = function(order, callBack)
   mDB.conn.query(orderCmd, orderParms, function(err)
     {
     if(err) throw err;
+
+    console.log(orderCmd + "\n");
+
     /** Get ID for the order. */
     mDB.conn.query("SELECT @LastID AS OrderID;",  function(err, rows)
       {
@@ -115,7 +117,7 @@ orders.saveOrder = function(order, callBack)
 
       for(var i = 0; i < items.length; i++)
         {
-        //TODO CH  TAX RATE, QUANTITY, DISCOUNT, AND DISCOUNT AMOUNT MUST BE DYNAMIC FROM INCOMING ORDER.
+        //TODO CH  load tax rate, discount, discount amount dynamicaly from incoming order.
         var qty      = 1;
         var subTotal = utils.round(items[i].Price * qty, 2);
         var taxRate  = config.app.tax;
@@ -126,10 +128,12 @@ orders.saveOrder = function(order, callBack)
           "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
           "VALUES (?,?,?,?,?,?,?,?,?,?);\n";
 
-        var itemParms = [items[i].ID,orderID,items[i].Price,qty,0,0,items[i].Price,taxRate,taxAmt,total];
+        var itemParms = [items[i].ID, orderID, items[i].Price, qty, 0, 0, items[i].Price, taxRate, taxAmt, total];
 
         itemParms.concat(itemParms);
         }
+
+      console.log(cmdItem + "\n");
 
       /** Save order items. */
       mDB.conn.query(cmdItem, itemParms, function(err)

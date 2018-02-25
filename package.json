@@ -24,6 +24,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "serve-favicon": "2.2.0",
-    "angular-route": "1.6.8"
+    "angular-route": "1.6.8",
+    "angular-ui-grid": "4.2.4"
   }
 }

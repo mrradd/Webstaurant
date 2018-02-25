@@ -6,7 +6,7 @@
   <title>POS | Webstaurant</title>
 
   <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css"></link>
 </head>
 <body style="background-color: darkgray">
   <ul class="nav nav-pills">
@@ -14,7 +14,7 @@
       <a href="pos"><span>Point of Sale</span></a>
     </li>
     <li class="nav-item">
-      <a href="manager"><span>Manager</span></a>
+      <a href="manager"><span>Metrics</span></a>
     </li>
     <li class="nav-item">
       <a href="kitchen"><span>Kitchen View</span></a>
@@ -25,60 +25,64 @@
 
     <div style="background-color: white; border-radius:10px; margin-right: 15px; margin-left: 15px">
 
-      <div class="row">
-        <div class="col-sm-12" style="margin-top:15px">
-          <div class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label col-sm-1">Total</label>
-              <div class="col-sm-1">
-                <span class="form-control" ng-bind="data.total | currency"></span>
-              </div>
-            </div>
+      <div class="row" style="margin-left: 15px; margin-right: 15px;">
+        <!--Menu Table-->
+        <div class="col-md-6">
+          <div class="row">
+            <h2>Menu Items</h2>
+            <div ui-grid="data.menuGrid"></div>
+          </div>
+        </div>
+
+        <!--Order Table-->
+        <div class="col-md-6">
+          <div class="row">
+            <h2>Order Items</h2>
+            <div ui-grid="data.orderGrid"></div>
           </div>
         </div>
       </div>
 
-      <!--Order Table-->
-      <div class="row" style="margin-left: 15px; margin-right: 15px;">
-        <div class="col-sm-6">
-          <h2>Menu Items</h2>
+      <!-- Totals -->
+      <div class="row">
+        <div class="col-md-12 col-sm-12" style="margin-top:15px">
 
-          <input class="form-control" ng-model="data.menuFilter" placeholder="Search Item">
-          <table class="table table-striped table-bordered">
-            <tr>
-              <th width="300px">Item</th>
-              <th width="150px">Price</th>
-              <th width="50px"></th>
-            </tr>
-            <tr ng-repeat="item in data.menuItems | filter: data.menuFilter">
-              <td ng-bind="item.Name" style="text-align: center"></td>
-              <td ng-bind="item.Price | currency" style="text-align: center"></td>
-              <td><button class="btn btn-success" ng-click="addToItemOrder(item)">+</button></td>
-            </tr>
-          </table>
-        </div>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-sm-offset-1 col-md-1 col-sm-1">Subtotal</label>
+              <div class="col-md-2 col-sm-2">
+                <span class="form-control" ng-bind="data.subtotal | currency"></span>
+              </div>
 
-        <div class="col-sm-6">
-          <h2>Order Items</h2>
-          <table class="table table-striped table-bordered">
-            <tr>
-              <th width="300px">Item</th>
-              <th width="150px">Price</th>
-              <th width="50px"></th>
-            </tr>
-            <tr ng-repeat="item in data.orderItems">
-              <td ng-bind="item.Name" style="text-align: center"></td>
-              <td ng-bind="item.Price | currency" style="text-align: center"></td>
-              <td><button class="btn btn-danger" ng-click="removeOrderItem(item)">-</button></td>
-            </tr>
-          </table>
+              <label class="control-label col-md-1 col-sm-1">Tax</label>
+              <div class="col-md-2 col-sm-2">
+                <span class="form-control" ng-bind="data.tax | currency"></span>
+              </div>
+
+              <label class="control-label col-md-1 col-sm-1">Total</label>
+              <div class="col-md-2 col-sm-2">
+                <span class="form-control" ng-bind="data.total | currency"></span>
+              </div>
+            </div>
+
+            <div class="form-horizontal">
+              <div class="form-group">
+                <div class="col-sm-offset-5 col-md-2 col-sm-2">
+                  <button class="btn btn-success" ng-click="submitOrder()">Submit Order</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
   <script src="../views/js/mainApp.js"></script>
   <script src="../views/js/pos.js"></script>
+  <script src="../views/js/theService.js"></script>
 </body>
 </html>

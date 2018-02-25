@@ -61,6 +61,7 @@ module.exports = function(app)
         throw err;
       else
         res.send(results);
+
       console.log("end /getOpenOrders");
       });
     });
@@ -83,6 +84,11 @@ module.exports = function(app)
       {
       if(err)
         throw err;
+      else
+        {
+        res.send({state:"GOOD"});
+        }
+
       console.log("end /postCloseOrder");
       });
     });
@@ -105,6 +111,11 @@ module.exports = function(app)
       {
       if(err)
         throw err;
+      else
+        {
+        res.send({state:"GOOD"});
+        }
+
       console.log("end /postCreateEmployee");
       });
     });
@@ -119,6 +130,7 @@ module.exports = function(app)
 
     console.log("start /postCreateItem");
 
+    /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
     if (req.body.length > 1e6)
       req.connection.destroy();
 
@@ -126,20 +138,23 @@ module.exports = function(app)
       {
       if(err)
         throw err;
+      else
+        {
+        res.send({state:"GOOD"});
+        }
 
       console.log("end /postCreateItem");
       });
     });
 
   /******************************************************************************
-   * postCreateOrder *
+   * postSaveOrder *
    ***
    * Creates an Oder in the database.
    *****************************************************************************/
-  app.post('/postCreateOrder', function(req, res)
+  app.post('/postSaveOrder', function(req, res)
     {
-
-    console.log("start /postCreateOrder");
+    console.log("start /postSaveOrder");
 
     /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
     if (req.body.length > 1e6)
@@ -148,9 +163,16 @@ module.exports = function(app)
     orders.saveOrder(req.body, function(err)
       {
       if(err)
+        {
+        console.log("error /postSaveOrder");
         throw err;
+        }
+      else
+        {
+        res.send({state:"GOOD"});
+        }
 
-      console.log("end /postCreateOrder");
+      console.log("end /postSaveOrder");
       });
     });
 
