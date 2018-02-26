@@ -16,8 +16,8 @@ var items = {};
  *****************************************************************************/
 items.createItem = function (item, callBack)
   {
-  var cmd   = "INSERT INTO Items (Name, Description, Price, Type, SKU, BarCode) VALUES (?,?,?,?,?,?)";
-  var parms = [item.name, item.description, item.price, item.type, item.sku, item.barcode];
+  var cmd   = "INSERT INTO Items (Name, Description, Price, Type) VALUES (?,?,?,?)";
+  var parms = [item.name, item.description, item.price, item.type];
 
   mDB.establishConnection();
 
@@ -43,7 +43,7 @@ items.createItem = function (item, callBack)
  *****************************************************************************/
 items.getItems = function(callBack)
   {
-  var cmd = "SELECT * FROM Items";
+  var cmd = "SELECT i.ID, i.Name, i.Description, i.Price, tc.Name AS Type FROM Items i JOIN TypeConstants tc ON tc.Value = i.Type;"
 
   /** Connect to the db. */
   mDB.establishConnection();

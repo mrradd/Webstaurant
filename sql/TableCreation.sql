@@ -16,8 +16,6 @@ CREATE TABLE Items
   Description VARCHAR(100) NOT NULL,
   Price       NUMERIC(15,2),
   Type        VARCHAR(100),
-  SKU         VARCHAR(100),
-  BarCode     VARCHAR(100),
   PRIMARY KEY (ID),
   CONSTRAINT FK_Items_Type FOREIGN KEY (Type) REFERENCES TypeConstants (Value)
   );

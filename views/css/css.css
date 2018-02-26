@@ -8,3 +8,14 @@ body{
   margin-right: 15px;
   margin-left: 15px
 }
+
+.vertSpace {
+  margin-bottom: 15px
+}
+
+/** Nudge the container over a bit on larger screens. */
+@media (min-width: 800px) {
+  .stdContainer {
+    margin-left: 50px
+  }
+}

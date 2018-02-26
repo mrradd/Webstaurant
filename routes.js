@@ -18,9 +18,8 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    // console.log('serving ' + __dirname + '/views/login.html');
-    // res.sendFile(path.join(__dirname +'/views/login.html'));
-    res.sendFile(path.join(__dirname +'/views/employees.html'));
+    console.log('serving ' + __dirname + '/views/login.html');
+    res.sendFile(path.join(__dirname +'/views/login.html'));
     });
 
   /** Loads Manager config page. */

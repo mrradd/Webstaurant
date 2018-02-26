@@ -9,16 +9,19 @@
   <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
   <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css">
   <link rel="stylesheet" href="../views/css/css.css">
+
 </head>
 <body>
   <div ng-app="app" ng-controller="KitchenController">
     <header></header>
-    <div class="stdContainer ">
-      <div class="row" style="margin: 15px 15px 15px 15px">
-        <div class="col-sm-12">
-        <div ui-grid="data.ordersGrid" class="grid"></div>
+    <div class="stdContainer container">
+
+      <div class="row">
+        <div class="col-sm-12" style="margin-top:15px; margin-bottom:15px;">
+          <div ui-grid="data.ordersGrid"></div>
         </div>
       </div>
+
       <div class="row">
         <div class="col-sm-12">
           <div class="col-sm-offset-5 col-sm-3" style="margin-bottom: 15px">
@@ -26,6 +29,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 

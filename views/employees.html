@@ -19,34 +19,63 @@
 
   <div ng-app="app" ng-controller="EmployeesController">
     <header></header>
-    <div class="stdContainer container" style="margin-left:50px">
+    <div class="stdContainer container">
       <div class="row">
-        <div class="col-md-offset-5 col-sm-12">
+        <div class="col-md-offset-5">
           <h2>Edit Employees</h2>
         </div>
       </div>
-      
+
       <div class="form-horizontal">
         <div class="form-group">
-          <div class="col-sm-12">
-            <label>First Name</label>
-            <input class="form-control" ng-model="data.firstName">
+          <div class="row">
+            <div class="col-sm-12 vertSpace">
+              <label class="col-sm-2 control-label">First Name</label>
+              <div class="col-sm-10">
+                <input class="form-control" ng-model="data.employee.firstName">
+              </div>
+            </div>
           </div>
 
-          <div class="col-sm-12">
-            <label>Last Name</label>
-            <input class="form-control" ng-model="data.lastName">
+          <div class="row">
+            <div class="col-sm-12 vertSpace">
+              <label class="col-sm-2 control-label">Last Name</label>
+              <div class="col-sm-10">
+                <input class="form-control" ng-model="data.employee.lastName">
+              </div>
+            </div>
           </div>
 
-          <div class="col-sm-12">
-            <label>Employee Number</label>
-            <input class="form-control" ng-model="data.number">
+          <div class="row">
+            <div class="col-sm-12 vertSpace">
+              <label class="col-sm-2 control-label">Employee Number</label>
+              <div class="col-sm-10">
+                <input class="form-control" ng-model="data.employee.employeeNumber">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <label class="col-sm-2 control-label">Type</label>
+              <div class="col-sm-2">
+                <select class="form-control" ng-model="data.employee.employeeType" ng-options="type.val as type.text for type in data.types"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-offset-6 vertSpace">
+              <button class="btn btn-success" ng-click="submitEmployee()">Submit</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="row" >
-        <div ui-grid="data.employeesGrid" class="grid"></div>
+      <div class="row">
+        <div class="col-sm-12 vertSpace">
+          <div ui-grid="data.employeesGrid"></div>
+        </div>
       </div>
     </div>
   </div>
