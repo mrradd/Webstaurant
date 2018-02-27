@@ -18,8 +18,10 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/login.html');
-    res.sendFile(path.join(__dirname +'/views/login.html'));
+    // console.log('serving ' + __dirname + '/views/login.html');
+    // res.sendFile(path.join(__dirname +'/views/login.html'));
+
+    res.sendFile(path.join(__dirname +'/views/metrics.html'));
     });
 
   /** Loads Manager config page. */
@@ -49,7 +51,7 @@ module.exports = function(app)
     });
 
   /** Loads Metrics page. */
-  app.get('/metrics', function(req, res)
+  app.get('/manager', function(req, res)
     {
     console.log('serving ' + __dirname + '/views/metrics.html');
     validateUser.validateType(req, [etManager], function(pass)

@@ -5,13 +5,13 @@
   /** Template for Header. Doing it this way rather than template file, because
    *  I couldn't get the template file to load. */
   var temp =
-    "<div class='col-sm-offset-2 col-md-offset-4'>" +
+    "<div class='col-sm-offset-2 col-md-offset-5'>" +
       "<ul class='nav nav-pills'>" +
-        "<li class='nav-item'><a href='pos'><span>Point of Sale</span></a></li>"   +
-        "<li class='nav-item'><a href='kitchen'><span>Kitchen</span></a></li>"     +
-        "<li class='nav-item'><a href='metrics'><span>Metrics</span></a></li>"     +
-        "<li class='nav-item'><a href='editMenu'><span>Menu</span></a></li>"       +
-        "<li class='nav-item'><a href='employees'><span>Employees</span></a></li>" +
+        "<li class='nav-item' ng-class=\"{active: $ctrl.activepill == 'pos'}\"><a href='pos'><span>Point of Sale</span></a></li>"   +
+        "<li class='nav-item' ng-class=\"{active: $ctrl.activepill == 'kitchen'}\"><a href='kitchen'><span>Kitchen</span></a></li>"     +
+        "<li class='nav-item' ng-class=\"{active: $ctrl.activepill == 'manager'}\"><a href='metrics'><span>Manager</span></a></li>"     +
+        // "<li class='nav-item'><a href='editMenu'><span>Menu</span></a></li>"       +
+        // "<li class='nav-item'><a href='employees'><span>Employees</span></a></li>" +
       "</ul>" +
     "</div>"
 
@@ -23,6 +23,12 @@
   angular.module("app")
   .component("header",
     {
+    bindings: {activepill: "@"},
     template: temp,
+    controller: HeaderController
     });
+  function HeaderController()
+    {
+
+    }
   })();
