@@ -18,20 +18,44 @@ module.exports = function(app)
   /** Initial page to load. Loads login page. */
   app.get('/', function(req, res)
     {
-    // console.log('serving ' + __dirname + '/views/login.html');
-    // res.sendFile(path.join(__dirname +'/views/login.html'));
-
-    res.sendFile(path.join(__dirname +'/views/manager.html'));
+    console.log('serving ' + __dirname + '/views/login.html');
+    res.sendFile(path.join(__dirname +'/views/login.html'));
     });
 
-  /** Loads Manager config page. */
-  app.get('/config', function(req, res)
+  /** Loads Edit Menu page. */
+  app.get('/editMenu', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/config.html');
+    console.log('serving ' + __dirname + '/views/editMenu.html');
+    validateUser.validateType(req, [etManager], function(pass)
+      {
+      if(pass)
+        res.sendFile(path.join(__dirname +'/views/editMenu.html'));
+      else
+        res.redirect('/error');
+      });
+    });
+
+  /** Loads Edit User page. */
+  app.get('/employees', function(req, res)
+    {
+    console.log('serving ' + __dirname + '/views/employees.html');
+    validateUser.validateType(req, [etManager], function(pass)
+      {
+      if(pass)
+        res.sendFile(path.join(__dirname +'/views/employees.html'));
+      else
+        res.redirect('/error');
+      });
+    });
+
+  /** Loads Edit User page. */
+  app.get('/error', function(req, res)
+    {
+    console.log('serving ' + __dirname + '/views/error.html');
     validateUser.validateType(req, [etWaiter, etManager, etCook], function(pass)
       {
       if(pass)
-        res.sendFile(path.join(__dirname +'/views/config.html'));
+        res.sendFile(path.join(__dirname +'/views/error.html'));
       else
         res.redirect('/');
       });
@@ -46,59 +70,7 @@ module.exports = function(app)
       if(pass)
         res.sendFile(path.join(__dirname +'/views/kitchen.html'));
       else
-        res.redirect('/config');
-      });
-    });
-
-  /** Loads Metrics page. */
-  app.get('/manager', function(req, res)
-    {
-    console.log('serving ' + __dirname + '/views/manager.html');
-    validateUser.validateType(req, [etManager], function(pass)
-      {
-      if(pass)
-        res.sendFile(path.join(__dirname +'/views/manager.html'));
-      else
-        res.redirect('/config');
-      });
-    });
-
-  /** Loads Edit Menu page. */
-  app.get('/editMenu', function(req, res)
-    {
-    console.log('serving ' + __dirname + '/views/editMenu.html');
-    validateUser.validateType(req, [etManager], function(pass)
-      {
-      if(pass)
-        res.sendFile(path.join(__dirname +'/views/editMenu.html'));
-      else
-        res.redirect('/config');
-      });
-    });
-
-  /** Loads Edit User page. */
-  app.get('/employees', function(req, res)
-    {
-    console.log('serving ' + __dirname + '/views/employees.html');
-    validateUser.validateType(req, [etManager], function(pass)
-      {
-      if(pass)
-        res.sendFile(path.join(__dirname +'/views/employees.html'));
-      else
-        res.redirect('/config');
-      });
-    });
-
-  /** Render POS page. */
-  app.get('/pos', function(req, res)
-    {
-    console.log('serving ' + __dirname + '/views/pos.html');
-    validateUser.validateType(req, [etWaiter, etManager], function(pass)
-      {
-      if(pass)
-        res.sendFile(path.join(__dirname +'/views/pos.html'));
-      else
-        res.redirect('/config');
+        res.redirect('/error');
       });
     });
 
@@ -112,12 +84,51 @@ module.exports = function(app)
     mDB.establishConnection();
     mDB.conn.query('INSERT INTO Sess(SessionID, UserID, EmployeeType) VALUES(?,?,?);',
       [req.sessionID, req.user.ID, req.user.EmployeeType], function(err)
+        {
+        mDB.conn.end();
+
+        if (err) throw err;
+
+        res.redirect('/welcome');
+        });
+    });
+
+  /** Loads Metrics page. */
+  app.get('/manager', function(req, res)
+    {
+    console.log('serving ' + __dirname + '/views/manager.html');
+    validateUser.validateType(req, [etManager], function(pass)
       {
-      mDB.conn.end();
+      if(pass)
+        res.sendFile(path.join(__dirname +'/views/manager.html'));
+      else
+        res.redirect('/error');
+      });
+    });
 
-      if (err) throw err;
+  /** Render POS page. */
+  app.get('/pos', function(req, res)
+    {
+    console.log('serving ' + __dirname + '/views/pos.html');
+    validateUser.validateType(req, [etWaiter, etManager], function(pass)
+      {
+      if(pass)
+        res.sendFile(path.join(__dirname +'/views/pos.html'));
+      else
+        res.redirect('/error');
+      });
+    });
 
-      res.redirect('/config');
+  /** Loads Edit User page. */
+  app.get('/welcome', function(req, res)
+    {
+    console.log('serving ' + __dirname + '/views/welcome.html');
+    validateUser.validateType(req, [etWaiter, etManager, etCook], function(pass)
+      {
+      if(pass)
+        res.sendFile(path.join(__dirname +'/views/welcome.html'));
+      else
+        res.redirect('/error');
       });
     });
   }

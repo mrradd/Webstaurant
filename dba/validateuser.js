@@ -16,31 +16,36 @@ var validateUser = {};
  ****************************************************************************/
 validateUser.validateType = function(req, types, callback)
   {
-  //TODO CH  uncomment
-  // mDB.establishConnection();
-  //
-  // var cmd    = 'SELECT * FROM Sess WHERE SessionID = ?';
-  // var sessID = req.sessionID;
-  //
-  // mDB.conn.query(cmd,[sessID],function(err,rows)
-  //   {
-  //
-  //   if(err) throw err;
-  //
-  //   var user = rows[0];
-  //   var pass = false;
-  //
-  //   /** Check against the types. */
-  //   if(user)
-  //     for(var i = 0; i < types.length; i++)
-  //       {
-  //       if(types[i] === user.EmployeeType)
-  //         pass = true;
-  //       }
-  //
-  //   callback(pass);
-  //   });
-  callback(true);
+  process.nextTick(function()
+    {
+    mDB.establishConnection();
+
+    /** Verify session in the database. */
+    var cmd    = 'SELECT * FROM Sess WHERE SessionID = ?';
+    var sessID = req.sessionID;
+
+    mDB.conn.query(cmd,[sessID],function(err,rows)
+      {
+
+      console.log(rows[0]);
+
+      if(err) throw err;
+
+      var user = rows[0];
+      var pass = false;
+
+      /** Check against the types. */
+      if(user)
+        for(var i = 0; i < types.length; i++)
+          {
+          if(types[i] === user.EmployeeType)
+            pass = true;
+          }
+
+      console.log(pass);
+      callback(pass);
+      });
+    });
   };
 
 module.exports = validateUser;

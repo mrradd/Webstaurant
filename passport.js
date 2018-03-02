@@ -14,23 +14,26 @@ module.exports = function(passport)
    *****************************************************************************/
   passport.deserializeUser(function(id, done)
     {
-    mDB.establishConnection();
-    mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id], function(err,rows)
+    process.nextTick(function()
       {
-      mDB.conn.end();
+      mDB.establishConnection();
+      mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id], function(err,rows)
+        {
+        //mDB.conn.end();
 
-      if (err) throw err;
+        if (err) throw err;
 
-      var user = rows[0];
+        var user = rows[0];
 
-      done(err, user);
+        done(err, user);
+        });
       });
     });
 
   /******************************************************************************
    * serializeUser *
    ***
-   * Serialized the user.
+   * Serialize the user.
    *****************************************************************************/
   passport.serializeUser(function(user, done)
     {
@@ -48,10 +51,11 @@ module.exports = function(passport)
       {
       mDB.establishConnection();
 
+      /** Check the password and username are valid. */
       mDB.conn.query('SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID  WHERE u.Username = ? AND u.Password = ?;', [username, password],
         function(err, results)
         {
-        mDB.conn.end();
+        //mDB.conn.end();
 
         if (err) throw err;
 
