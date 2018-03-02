@@ -3,31 +3,47 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-
     <title>Manager | Webstaurant</title>
-    <meta content="POS" name="Point of Sale">
-    <meta name="Team UAT">
 
     <link href="../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="../node_modules/angular-ui-grid/ui-grid.css">
     <link rel="stylesheet" href="../views/css/css.css">
-    
+
   </head>
 
   <body>
     <div ng-app="app" ng-controller="ManagerController">
       <header activepill="manager"></header>
+      <div class="stdContainer container" style="margin-left:50px">
+        <div class="row">
+          <div class="col-md-2" style="margin-top:15px;">
+            <manager-nav activepill="dashboard"></manager-nav>
+          </div>
+
+          <div class="col-md-10">
+            <div class="chart" id="menuItemsChart"></div>
+            <div class="chart" id="ordersChart"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <script src="../node_modules/angular/angular.js"></script>
     <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
     <script src="../views/js/mainApp.js"></script>
     <script src="../views/js/header.js"></script>
+    <script src="../views/js/managerNav.js"></script>
     <script src="../views/js/utils.js"></script>
     <script src="../views/js/theService.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
 
-    <script src="../views/js/metrics.js"></script>
+    <script src="../views/js/manager.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+
   </body>
 </html>

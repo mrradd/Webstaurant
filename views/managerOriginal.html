@@ -82,32 +82,6 @@
                 <div id="piechart">
                 </div>
             </div>
-            <script>
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
-
-                function drawChart() {
-
-                    var data = google.visualization.arrayToDataTable([
-                        ['Item', 'Amount Sold'],
-                        ['Cheeseburger',     11],
-                        ['Wings',      2],
-                        ['Soup',  2],
-                        ['Burrito', 2],
-                        ['Hamburger',    7]
-                    ]);
-
-                    var options = {
-                        title: 'Top Selling Items',
-                        backgroundColor: 'transparent',
-                        is3D:true
-                    };
-
-                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-                    chart.draw(data, options);
-                }
-            </script>
         </div>
     </div>
 </div>

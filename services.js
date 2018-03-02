@@ -48,6 +48,25 @@ module.exports = function(app)
     });
 
   /******************************************************************************
+   * getOrderTotals *
+   ***
+   * Gets all totals for orders that are marked closed.
+   *****************************************************************************/
+  app.get('/getOrderTotals', function(req, res)
+    {
+    console.log("start /getOrderTotals");
+    orders.getOrderTotals(function(err, results)
+      {
+      if(err)
+        throw err;
+      else
+        res.send(results);
+
+      console.log("end /getOrderTotals");
+      });
+    });
+
+  /******************************************************************************
    * getOpenOrders *
    ***
    * Gets all orders that are not marked closed from the database.

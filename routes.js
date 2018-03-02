@@ -21,7 +21,7 @@ module.exports = function(app)
     // console.log('serving ' + __dirname + '/views/login.html');
     // res.sendFile(path.join(__dirname +'/views/login.html'));
 
-    res.sendFile(path.join(__dirname +'/views/metrics.html'));
+    res.sendFile(path.join(__dirname +'/views/manager.html'));
     });
 
   /** Loads Manager config page. */
@@ -53,11 +53,11 @@ module.exports = function(app)
   /** Loads Metrics page. */
   app.get('/manager', function(req, res)
     {
-    console.log('serving ' + __dirname + '/views/metrics.html');
+    console.log('serving ' + __dirname + '/views/manager.html');
     validateUser.validateType(req, [etManager], function(pass)
       {
       if(pass)
-        res.sendFile(path.join(__dirname +'/views/metrics.html'));
+        res.sendFile(path.join(__dirname +'/views/manager.html'));
       else
         res.redirect('/config');
       });

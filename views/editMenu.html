@@ -15,64 +15,75 @@
   <body>
 
     <div ng-app="app" ng-controller="EditMenuController">
-      <header></header>
+      <header activepill="manager"></header>
       <div class="stdContainer container" style="margin-left:50px">
+
         <div class="row">
-          <div class="col-md-offset-5">
-            <h2>Edit Menu</h2>
+
+          <div class="col-md-2" style="margin-top:15px;">
+            <manager-nav activepill="editMenu"></manager-nav>
           </div>
-        </div>
 
-        <div class="form-horizontal">
-          <div class="form-group">
+          <div class="col-md-10" style="margin-top: 15px;">
+            <div class="form-horizontal">
+              <div class="form-group">
 
-            <div class="row">
+                <!--Name-->
+                <div class="row">
+                  <div class="col-sm-12 vertSpace">
+                    <label class="col-sm-1 control-label">Name</label>
+                    <div class="col-sm-11">
+                      <input class="form-control" ng-model="data.item.name">
+                    </div>
+                  </div>
+                </div>
+
+                <!--Description-->
+                <div class="row">
+                  <div class="col-sm-12 vertSpace">
+                    <label class="col-sm-1 control-label">Description</label>
+                    <div class="col-sm-11">
+                      <input class="form-control" ng-model="data.item.description">
+                    </div>
+                  </div>
+                </div>
+
+                <!--Price-->
+                <div class="row">
+                  <div class="col-sm-12 vertSpace">
+                    <label class="col-sm-1 control-label">Price</label>
+                    <div class="col-sm-11">
+                      <input class="form-control" ng-model="data.item.price">
+                    </div>
+                  </div>
+                </div>
+
+                <!--Type-->
+                <div class="row">
+                  <div class="col-sm-12">
+                    <label class="col-sm-1 control-label">Type</label>
+                    <div class="col-sm-2">
+                      <select class="form-control" ng-model="data.item.type" ng-options="type.val as type.text for type in data.types"></select>
+                    </div>
+                  </div>
+                </div>
+
+                <!--Controls-->
+                <div class="row">
+                  <div class="col-sm-offset-5" style="margin-top:15px">
+                    <button class="btn btn-success" ng-click="submitItem()">Submit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+
+            <!--Datagrid-->
+            <div class="row" >
               <div class="col-sm-12 vertSpace">
-                <label class="col-sm-2 control-label">Name</label>
-                <div class="col-sm-10">
-                  <input class="form-control" ng-model="data.item.name">
-                </div>
+                <div ui-grid="data.itemsGrid" ui-grid-empty-base-layer></div>
               </div>
             </div>
-
-            <div class="row">
-              <div class="col-sm-12 vertSpace">
-                <label class="col-sm-2 control-label">Description</label>
-                <div class="col-sm-10">
-                  <input class="form-control" ng-model="data.item.description">
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-12 vertSpace">
-                <label class="col-sm-2 control-label">Price</label>
-                <div class="col-sm-10">
-                  <input class="form-control" ng-model="data.item.price">
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-12">
-                <label class="col-sm-2 control-label">Type</label>
-                <div class="col-sm-2">
-                  <select class="form-control" ng-model="data.item.type" ng-options="type.val as type.text for type in data.types"></select>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-sm-offset-6 vertSpace">
-                <button class="btn btn-success" ng-click="submitItem()">Submit</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row" >
-          <div class="col-sm-12 vertSpace">
-            <div ui-grid="data.itemsGrid"></div>
           </div>
         </div>
       </div>
@@ -82,6 +93,7 @@
     <script src="../node_modules/angular-ui-grid/ui-grid.js"></script>
     <script src="../views/js/mainApp.js"></script>
     <script src="../views/js/header.js"></script>
+    <script src="../views/js/managerNav.js"></script>
     <script src="../views/js/utils.js"></script>
     <script src="../views/js/theService.js"></script>
 

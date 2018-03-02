@@ -13,14 +13,14 @@
   <div ng-app="app" ng-controller="POSController">
     <header activepill="pos"></header>
 
-    <div class="stdContainer">
+    <div class="stdContainer container">
 
       <div class="row" style="margin-left: 15px; margin-right: 15px;">
         <!--Menu Table-->
         <div class="col-md-6">
           <div class="row">
             <h2>Menu Items</h2>
-            <div ui-grid="data.menuGrid"></div>
+            <div ui-grid="data.menuGrid" ui-grid-empty-base-layer></div>
           </div>
         </div>
 
@@ -28,7 +28,7 @@
         <div class="col-md-6">
           <div class="row">
             <h2>Order Items</h2>
-            <div ui-grid="data.orderGrid"></div>
+            <div ui-grid="data.orderGrid" ui-grid-empty-base-layer></div>
           </div>
         </div>
       </div>

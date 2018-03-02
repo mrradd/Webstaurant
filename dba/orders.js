@@ -67,6 +67,37 @@ orders.getOpenOrders = function (callBack)
   }
 
 /******************************************************************************
+ * getOrderTotals *
+ ***
+ * Gets totals for closed orders.
+ *
+ * @param  callBack  Callback function to handle response from database call.
+ *****************************************************************************/
+orders.getOrderTotals = function (callBack)
+  {
+  var cmd = "SELECT o.OrderNumber, SUM(li.TotalAmount) AS Total\n" +
+              "FROM Orders    o\n" +
+              "JOIN LineItems li ON li.OrderID = o.ID\n" +
+             "WHERE o.Closed = 1\n" +
+             "GROUP BY o.OrderNumber\n";
+
+  mDB.establishConnection();
+
+  /** Query the db, and call the call back with the result set. */
+  mDB.conn.query(cmd ,function(err,rows)
+    {
+    /** Cleanup and close the connection. */
+    mDB.conn.end();
+
+    if(err) throw err;
+
+    console.log(cmd + "\n");
+    console.log(rows);
+    callBack(err, rows);
+    });
+  };
+
+/******************************************************************************
  * saveOrder *
  ***
  * Creates an Order in the database.
