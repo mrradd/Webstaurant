@@ -9,55 +9,28 @@ var config = require('../config.js');
 var orders = {};
 
 /******************************************************************************
- * closeOrder *
+ * getOrders *
  ***
- * Marks an order in the database as closed.
+ * Gets all orders from the database that opened or closed depending on the
+ * passed in filter.
  *
- * @param  orderID   Order ID to of order to mark as closed.
+ * @param  isClosed
  * @param  callBack  Callback function to handle response from database call.
  *****************************************************************************/
-orders.closeOrder = function (orderID, callBack)
-  {
-  var cmd = "UPDATE Orders SET Closed = 1 WHERE ID = ?;";
-
-  mDB.establishConnection();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, [orderID], function(err)
-    {
-    if(err) throw err;
-    console.log(cmd);
-    callBack(err);
-    });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
-  }
-
-/******************************************************************************
- * getOpenOrders *
- ***
- * Gets all orders from the database that are not closed.
- *
- * @param  callBack  Callback function to handle response from database call.
- *****************************************************************************/
-orders.getOpenOrders = function (callBack)
+orders.getOrders = function (isClosed, callBack)
   {
   var cmd =
     "SELECT o.ID AS OID, o.OrderNumber, o.TransactionType, li.ID AS LIID, i.Name\n" +
     "FROM Orders    o\n"                            +
     "JOIN LineItems li ON li.OrderID = o .ID\n"     +
     "JOIN Items     i  ON i .ID      = li.ItemID\n" +
-    "WHERE Closed = 0;";
+    "WHERE Closed = ?;";
 
   mDB.establishConnection();
 
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd ,function(err,rows)
+  mDB.conn.query(cmd, [isClosed] ,function(err,rows)
     {
-    /** Cleanup and close the connection. */
-    mDB.conn.end();
-
     if(err) throw err;
 
     console.log(cmd + "\n");
@@ -86,8 +59,6 @@ orders.getOrderTotals = function (callBack)
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd ,function(err,rows)
     {
-    /** Cleanup and close the connection. */
-    mDB.conn.end();
 
     if(err) throw err;
 
@@ -111,7 +82,7 @@ orders.saveOrder = function(order, callBack)
 
   var orderID = 0;
 
-  //GENERATE RANDOM NUMBER.
+  //GENERATE RANDOM NUMBER FOR ORDER.
   function getRandomInt(min, max)
     {
     min = Math.ceil(min);
@@ -119,7 +90,6 @@ orders.saveOrder = function(order, callBack)
     return Math.floor(Math.random() * (max - min)) + min;
     }
 
-  //TODO CH  order loads dynamically.
   /** Create the sql command for creating the order, and saving the most recent order id. */
   var ord        = order['order'];
   var ordNum     = getRandomInt(1,10000);
@@ -181,6 +151,30 @@ orders.saveOrder = function(order, callBack)
         });
       });
     });
-  }
+  };
+
+/******************************************************************************
+ * updateOrder *
+ ***
+ * Marks an order in the database as closed.
+ *
+ * @param  orderID     Order ID to of order to mark as closed.
+ * @param  closeOrder  True: close order. False: open order.
+ * @param  callBack    Callback function to handle response from database call.
+ *****************************************************************************/
+orders.updateOrder = function (closeOrder, orderID, callBack)
+  {
+  var cmd = "UPDATE Orders SET Closed = ? WHERE ID = ?;";
+
+  mDB.establishConnection();
+
+  /** Query the db, and call the call back with the result set. */
+  mDB.conn.query(cmd, [closeOrder, orderID], function(err)
+    {
+    if(err) throw err;
+    console.log(cmd);
+    callBack(err);
+    });
+  };
 
 module.exports = orders;

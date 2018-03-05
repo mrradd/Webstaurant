@@ -48,6 +48,27 @@ module.exports = function(app)
     });
 
   /******************************************************************************
+   * getOrders *
+   ***
+   * Gets all orders that are not marked closed from the database.
+   *
+   * @param  isClosed  Order is closed.
+   *****************************************************************************/
+  app.get('/getOrders/:isClosed', function(req, res)
+    {
+    console.log("start /getOpenOrders");
+    orders.getOrders(req.params.isClosed, function(err, results)
+      {
+      if(err)
+        throw err;
+      else
+        res.send(results);
+
+      console.log("end /getOpenOrders");
+      });
+    });
+
+  /******************************************************************************
    * getOrderTotals *
    ***
    * Gets all totals for orders that are marked closed.
@@ -67,39 +88,20 @@ module.exports = function(app)
     });
 
   /******************************************************************************
-   * getOpenOrders *
-   ***
-   * Gets all orders that are not marked closed from the database.
-   *****************************************************************************/
-  app.get('/getOpenOrders', function(req, res)
-    {
-    console.log("start /getOpenOrders");
-    orders.getOpenOrders(function(err, results)
-      {
-      if(err)
-        throw err;
-      else
-        res.send(results);
-
-      console.log("end /getOpenOrders");
-      });
-    });
-
-  /******************************************************************************
    * postCloseOrder *
    ***
    * Calls the database to close the order with passed in ID.
    *****************************************************************************/
-  app.post('/postCloseOrder', function(req, res)
+  app.post('/postUpdateOrder', function(req, res)
     {
 
-    console.log("start /postCloseOrder");
+    console.log("start /postUpdateOrder");
 
     /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
     if (req.body.length > 1e6)
       req.connection.destroy();
 
-    orders.closeOrder(req.body.orderID, function(err)
+    orders.updateOrder(req.body.closeOrder, req.body.orderID, function(err)
       {
       if(err)
         throw err;
@@ -108,7 +110,7 @@ module.exports = function(app)
         res.send({state:"GOOD"});
         }
 
-      console.log("end /postCloseOrder");
+      console.log("end /postUpdateOrder");
       });
     });
 

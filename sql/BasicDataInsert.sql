@@ -27,4 +27,4 @@ VALUES ('Hamburger',    'Lettuce, tomato, pickle, special sauce, all beef paddy.
        ('Cheeseburger', 'Lettuce, tomato, pickle, cheese, special sauce, all beef paddy.', 5.25, 'IT_ENTREE'),
        ('Fries',        'Golden-brown fried goodness.',                                    2.00, 'IT_SIDE'),
        ('Soda',         '24oz. fountain drink. Free refills.',                             1.25, 'IT_BEVERAGE'),
-       ('Ice Cream',    'Single scoop. Any flavor.',                                       1.00, 'IT_DESERT');
+       ('Ice Cream',    'Single scoop. Any flavor.',                                       1.00, 'IT_DESSERT');

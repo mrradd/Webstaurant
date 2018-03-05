@@ -2,8 +2,6 @@
   {
   "use strict";
 
-
-
   /****************************************************************************
    * ManagerController */
   /**
@@ -112,6 +110,7 @@
           {
           menuItems = res.data;
           console.log(menuItems);
+          google.charts.setOnLoadCallback(drawCharts);
           },
         function fail(res)
           {
@@ -126,6 +125,7 @@
           {
           ordersServed = res.data;
           console.log(ordersServed);
+          google.charts.setOnLoadCallback(drawCharts);
           },
         function fail(res)
           {
@@ -134,6 +134,5 @@
       };
 
     getData();
-    google.charts.setOnLoadCallback(drawCharts);
     });//End ManagerController
   })();

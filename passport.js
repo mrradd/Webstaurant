@@ -19,8 +19,6 @@ module.exports = function(passport)
       mDB.establishConnection();
       mDB.conn.query("SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID WHERE e.ID = ?;", [id], function(err,rows)
         {
-        //mDB.conn.end();
-
         if (err) throw err;
 
         var user = rows[0];
@@ -55,8 +53,6 @@ module.exports = function(passport)
       mDB.conn.query('SELECT * FROM Users u JOIN Employees e ON e.ID = u.EmployeeID  WHERE u.Username = ? AND u.Password = ?;', [username, password],
         function(err, results)
         {
-        //mDB.conn.end();
-
         if (err) throw err;
 
         var user = results[0];

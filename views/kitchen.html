@@ -15,7 +15,9 @@
   <div ng-app="app" ng-controller="KitchenController">
     <header activepill="kitchen"></header>
     <div class="stdContainer container">
-
+      <div class="row" style="margin-left:15px">
+        <h2>Open Orders</h2>
+      </div>
       <div class="row">
         <div class="col-sm-12" style="margin-top:15px; margin-bottom:15px;">
           <div ui-grid="data.ordersGrid" ui-grid-empty-base-layer></div>
@@ -25,11 +27,19 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="col-sm-offset-5 col-sm-3" style="margin-bottom: 15px">
-            <button class="btn btn-lg btn-warning" ng-click="loadOpenOrders()">Reload Items</button>
+            <button class="btn btn-lg btn-warning" ng-click="updateOrderLists()">Reload Items</button>
           </div>
         </div>
       </div>
 
+      <div class="row" style="margin-left:15px">
+        <h2>Closed Orders</h2>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="margin-top:15px; margin-bottom:15px;">
+          <div ui-grid="data.finishedOrdersGrid" ui-grid-empty-base-layer></div>
+        </div>
+      </div>
     </div>
   </div>
 
