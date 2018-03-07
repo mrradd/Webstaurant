@@ -24,18 +24,22 @@ orders.getOrders = function (isClosed, callBack)
     "FROM Orders    o\n"                            +
     "JOIN LineItems li ON li.OrderID = o .ID\n"     +
     "JOIN Items     i  ON i .ID      = li.ItemID\n" +
-    "WHERE Closed = ?;";
+    "WHERE Closed = ?" +
+    "ORDER BY o.OrderNumber, i.Name;";
 
-  mDB.establishConnection();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, [isClosed] ,function(err,rows)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
+    /** Query the db, and call the call back with the result set. */
+    conn.query(cmd, [isClosed] ,function(err,rows)
+      {
+      conn.release();
 
-    console.log(cmd + "\n");
-    console.log(rows);
-    callBack(err, rows);
+      if(err) throw err;
+
+      console.log(rows);
+
+      callBack(err, rows);
+      });
     });
   }
 
@@ -52,19 +56,21 @@ orders.getOrderTotals = function (callBack)
               "FROM Orders    o\n" +
               "JOIN LineItems li ON li.OrderID = o.ID\n" +
              "WHERE o.Closed = 1\n" +
-             "GROUP BY o.OrderNumber\n";
+             "GROUP BY o.OrderNumber;\n";
 
-  mDB.establishConnection();
-
-  /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd ,function(err,rows)
+  mDB.pool.getConnection(function(err, conn)
     {
+    /** Query the db, and call the call back with the result set. */
+    conn.query(cmd ,function(err,rows)
+      {
+      conn.release();
 
-    if(err) throw err;
+      if(err) throw err;
 
-    console.log(cmd + "\n");
-    console.log(rows);
-    callBack(err, rows);
+      console.log(rows);
+
+      callBack(err, rows);
+      });
     });
   };
 
@@ -82,7 +88,7 @@ orders.saveOrder = function(order, callBack)
 
   var orderID = 0;
 
-  //GENERATE RANDOM NUMBER FOR ORDER.
+  //TODO CH  GENERATE RANDOM NUMBER FOR ORDER. SHOULD BE GENERATED DYNAMICALLY.
   function getRandomInt(min, max)
     {
     min = Math.ceil(min);
@@ -99,55 +105,54 @@ orders.saveOrder = function(order, callBack)
     "VALUES(?,?,?,?,?,?); SET @LastID = LAST_INSERT_ID();";
 
   /** Save order record. */
-  mDB.conn.query(orderCmd, orderParms, function(err)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
-
-    console.log(orderCmd + "\n");
-
-    /** Get ID for the order. */
-    mDB.conn.query("SELECT @LastID AS OrderID;",  function(err, rows)
+    conn.query(orderCmd, orderParms, function(err)
       {
       if(err) throw err;
-      orderID = rows[0].OrderID;
 
-      /** Iterate through all items, and create the sql command for saving each order line item. */
-      var items   = order['items'];
-      var cmdItem = "";
-
-      for(var i = 0; i < items.length; i++)
-        {
-        //TODO CH  load tax rate, discount, discount amount dynamically from incoming order.
-        var qty      = 1;
-        var subTotal = utils.round(items[i].Price * qty, 2);
-        var taxRate  = config.app.tax;
-        var taxAmt   = utils.round(subTotal * taxRate, 2);
-        var total    = subTotal + taxAmt;
-
-        cmdItem +=
-          "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
-          "VALUES (" +
-          mDB.conn.escape(items[i].ID)          + "," +
-          mDB.conn.escape(orderID)              + "," +
-          mDB.conn.escape(items[i].Price)       + "," +
-          mDB.conn.escape(qty)                  + ",0,0," +
-          mDB.conn.escape(items[i].Price * qty) + "," +
-          mDB.conn.escape(taxRate)              + "," +
-          mDB.conn.escape(taxAmt)               + "," +
-          mDB.conn.escape(total)                + ");\n";
-        }
-
-      console.log(cmdItem);
-
-      /** Save order items. */
-      mDB.conn.query(cmdItem, function(err)
+      /** Get ID for the order. */
+      conn.query("SELECT @LastID AS OrderID;",  function(err, rows)
         {
         if(err) throw err;
+        orderID = rows[0].OrderID;
 
-        /** Cleanup and close the connection. */
-        mDB.conn.end();
+        /** Iterate through all items, and create the sql command for saving each order line item. */
+        var items   = order['items'];
+        var cmdItem = "";
 
-        callBack(err);
+        for(var i = 0; i < items.length; i++)
+          {
+          //TODO CH  load tax rate, discount, discount amount dynamically from incoming order.
+          var qty      = 1;
+          var subTotal = utils.round(items[i].Price * qty, 2);
+          var taxRate  = config.app.tax;
+          var taxAmt   = utils.round(subTotal * taxRate, 2);
+          var total    = subTotal + taxAmt;
+
+          cmdItem +=
+            "INSERT INTO LineItems (ItemID, OrderID, Price, Quantity, Discount, DiscountAmount, Subtotal, TaxRate, TaxAmount, TotalAmount)\n" +
+            "VALUES (" +
+            mDB.conn.escape(items[i].ID)          + "," +
+            mDB.conn.escape(orderID)              + "," +
+            mDB.conn.escape(items[i].Price)       + "," +
+            mDB.conn.escape(qty)                  + ",0,0," +
+            mDB.conn.escape(items[i].Price * qty) + "," +
+            mDB.conn.escape(taxRate)              + "," +
+            mDB.conn.escape(taxAmt)               + "," +
+            mDB.conn.escape(total)                + ");\n";
+          }
+
+        /** Save order items. */
+        conn.query(cmdItem, function(err)
+          {
+          /** Cleanup the connection. */
+          conn.release();
+
+          if(err) throw err;
+
+          callBack(err);
+          });
         });
       });
     });
@@ -171,6 +176,7 @@ orders.updateOrder = function (closeOrder, orderID, callBack)
   /** Query the db, and call the call back with the result set. */
   mDB.conn.query(cmd, [closeOrder, orderID], function(err)
     {
+    mDB.conn.end();
     if(err) throw err;
     console.log(cmd);
     callBack(err);

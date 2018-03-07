@@ -18,32 +18,36 @@ validateUser.validateType = function(req, types, callback)
   {
   process.nextTick(function()
     {
-    mDB.establishConnection();
-
     /** Verify session in the database. */
     var cmd    = 'SELECT * FROM Sess WHERE SessionID = ?';
     var sessID = req.sessionID;
 
-    mDB.conn.query(cmd,[sessID],function(err,rows)
-       {
+    /** Query the db, and call the call back with the result set. */
+    mDB.pool.getConnection(function(err, conn)
+      {
+      conn.query(cmd,[sessID],function(err,rows)
+        {
+        conn.release();
 
-       console.log(rows[0]);
+        console.log(rows[0]);
 
-       if(err) throw err;
+        if(err) throw err;
 
-       var user = rows[0];
-       var pass = false;
+        var user = rows[0];
+        var pass = false;
 
-       /** Check against the types. */
-       if(user)
-         for(var i = 0; i < types.length; i++)
-           {
-           if(types[i] === user.EmployeeType)
-             pass = true;
-           }
+        /** Check against the types. */
+        if(user)
+          for(var i = 0; i < types.length; i++)
+            {
+            if(types[i] === user.EmployeeType)
+              pass = true;
+            }
 
-      console.log(pass);
-      callback(pass);
+        console.log(pass);
+        callback(pass);
+        //callback(true);
+        });
       });
     });
   };

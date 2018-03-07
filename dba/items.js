@@ -19,19 +19,18 @@ items.createItem = function (item, callBack)
   var cmd   = "INSERT INTO Items (Name, Description, Price, Type) VALUES (?,?,?,?)";
   var parms = [item.name, item.description, item.price, item.type];
 
-  mDB.establishConnection();
-
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, parms, function(err)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
+    conn.query(cmd, parms, function(err)
+      {
+      conn.release();
 
-    console.log(cmd);
-    callBack(err);
+      if(err) throw err;
+
+      callBack(err);
+      });
     });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
   };
 
 /******************************************************************************
@@ -45,20 +44,22 @@ items.getItems = function(callBack)
   {
   var cmd = "SELECT i.ID, i.Name, i.Description, i.Price, tc.Name AS Type FROM Items i JOIN TypeConstants tc ON tc.Value = i.Type;"
 
-  /** Connect to the db. */
-  mDB.establishConnection();
-
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, function(err, rows)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
-    console.log(cmd + "\n");
-    console.log(rows);
-    callBack(err, rows);
-    });
+    conn.query(cmd, function(err, rows)
+      {
 
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
+      /** Cleanup and close the connection. */
+      conn.release();
+
+      if(err) throw err;
+
+      console.log(rows);
+
+      callBack(err, rows);
+      });
+    });
   };
 
   module.exports = items;

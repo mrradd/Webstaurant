@@ -12,7 +12,9 @@ var config =
     password: "password",
     port    : "8000",
     database: "DBName",
-    multipleStatements: true
+    multipleStatements: true,
+    connectionLimit: 10,
+    debug: true
     },
   session:
     {

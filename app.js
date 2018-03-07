@@ -41,6 +41,9 @@ app.use(passport.session());
 /** Use morgan to log requests to the console. */
 app.use(morgan('dev'));
 
+/** Create db connection pool. */
+mDB.establishPool();
+
 /** Setup needed modules. */
 require('./passport.js')(passport);
 require('./routes.js')(app);

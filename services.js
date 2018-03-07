@@ -16,15 +16,19 @@ module.exports = function(app)
    *****************************************************************************/
   app.get('/getEmployees', function(req, res)
     {
-
     console.log("start /getEmployees");
     employees.getEmployees(function(err, results)
       {
       if(err)
+        {
+        console.log("error /getEmployees");
         throw err;
+        }
       else
+        {
+        console.log("end /getEmployees");
         res.send(results);
-      console.log("end /getEmployees");
+        }
       });
     });
 
@@ -35,15 +39,19 @@ module.exports = function(app)
    *****************************************************************************/
   app.get('/getItems', function(req, res)
     {
-
     console.log("start /getItems");
     items.getItems(function(err, results)
       {
       if(err)
+        {
+        console.log("error /getItems");
         throw err;
+        }
       else
+        {
+        console.log("end /getItems");
         res.send(results);
-      console.log("end /getItems");
+        }
       });
     });
 
@@ -60,11 +68,16 @@ module.exports = function(app)
     orders.getOrders(req.params.isClosed, function(err, results)
       {
       if(err)
+        {
+        console.log("error /getOpenOrders");
         throw err;
+        }
       else
+        {
+        console.log("end /getOpenOrders");
         res.send(results);
+        }
 
-      console.log("end /getOpenOrders");
       });
     });
 
@@ -79,11 +92,15 @@ module.exports = function(app)
     orders.getOrderTotals(function(err, results)
       {
       if(err)
+        {
+        console.log("error /getOrderTotals");
         throw err;
+        }
       else
+        {
+        console.log("end /getOrderTotals");
         res.send(results);
-
-      console.log("end /getOrderTotals");
+        }
       });
     });
 
@@ -104,13 +121,15 @@ module.exports = function(app)
     orders.updateOrder(req.body.closeOrder, req.body.orderID, function(err)
       {
       if(err)
+        {
+        console.log("error /postUpdateOrder");
         throw err;
+        }
       else
         {
+        console.log("end /postUpdateOrder");
         res.send({state:"GOOD"});
         }
-
-      console.log("end /postUpdateOrder");
       });
     });
 
@@ -131,13 +150,15 @@ module.exports = function(app)
     employees.createEmployee(req.body, function(err)
       {
       if(err)
+        {
+        console.log("error /postCreateEmployee");
         throw err;
+        }
       else
         {
+        console.log("end /postCreateEmployee");
         res.send({state:"GOOD"});
         }
-
-      console.log("end /postCreateEmployee");
       });
     });
 
@@ -158,13 +179,15 @@ module.exports = function(app)
     items.createItem(req.body, function(err)
       {
       if(err)
+        {
+        console.log("error /postCreateItem");
         throw err;
+        }
       else
         {
+        console.log("end /postCreateItem");
         res.send({state:"GOOD"});
         }
-
-      console.log("end /postCreateItem");
       });
     });
 
@@ -190,10 +213,9 @@ module.exports = function(app)
         }
       else
         {
+        console.log("end /postSaveOrder");
         res.send({state:"GOOD"});
         }
-
-      console.log("end /postSaveOrder");
       });
     });
 

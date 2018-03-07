@@ -22,15 +22,17 @@ employees.createEmployee = function createEmployee(employee, callBack)
   mDB.establishConnection();
 
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd, parms, function(err)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
-    console.log(cmd);
-    callBack(err);
-    });
+    conn.query(cmd, parms, function(err)
+      {
+      conn.release();
 
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
+      if(err) throw err;
+
+      callBack(err);
+      });
+    });
   }
 
 /******************************************************************************
@@ -47,17 +49,19 @@ employees.getEmployees = function getEmployees(callBack)
   mDB.establishConnection();
 
   /** Query the db, and call the call back with the result set. */
-  mDB.conn.query(cmd ,function(err,rows)
+  mDB.pool.getConnection(function(err, conn)
     {
-    if(err) throw err;
+    conn.query(cmd ,function(err,rows)
+      {
+      conn.release();
 
-    console.log(cmd + "\n");
-    console.log(rows);
-    callBack(err, rows);
+      if(err) throw err;
+
+      console.log(rows);
+
+      callBack(err, rows);
+      });
     });
-
-  /** Cleanup and close the connection. */
-  mDB.conn.end();
   }
 
-  module.exports = employees;
+module.exports = employees;
