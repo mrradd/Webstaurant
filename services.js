@@ -58,23 +58,23 @@ module.exports = function(app)
   /******************************************************************************
    * getOrders *
    ***
-   * Gets all orders that are not marked closed from the database.
+   * Gets all closed/open orders depending on passed in value.
    *
    * @param  isClosed  Order is closed.
    *****************************************************************************/
   app.get('/getOrders/:isClosed', function(req, res)
     {
-    console.log("start /getOpenOrders");
+    console.log("start /getOrders");
     orders.getOrders(req.params.isClosed, function(err, results)
       {
       if(err)
         {
-        console.log("error /getOpenOrders");
+        console.log("error /getOrders");
         throw err;
         }
       else
         {
-        console.log("end /getOpenOrders");
+        console.log("end /getOrders");
         res.send(results);
         }
 
@@ -107,11 +107,10 @@ module.exports = function(app)
   /******************************************************************************
    * postCloseOrder *
    ***
-   * Calls the database to close the order with passed in ID.
+   * Calls the database to close the order with given in ID.
    *****************************************************************************/
   app.post('/postUpdateOrder', function(req, res)
     {
-
     console.log("start /postUpdateOrder");
 
     /** Too much POST data, kill the connection 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB */
@@ -136,7 +135,7 @@ module.exports = function(app)
   /******************************************************************************
    * postCreateEmployee *
    ***
-   * Creates an Item in the database.
+   * Creates an Employee in the database with passed in object.
    *****************************************************************************/
   app.post('/postCreateEmployee', function(req, res)
     {
@@ -165,7 +164,7 @@ module.exports = function(app)
   /******************************************************************************
    * postCreateItem *
    ***
-   * Creates an Item in the database.
+   * Creates an Item in the database with passed in object.
    *****************************************************************************/
   app.post('/postCreateItem', function(req, res)
     {
@@ -194,7 +193,7 @@ module.exports = function(app)
   /******************************************************************************
    * postSaveOrder *
    ***
-   * Creates an Oder in the database.
+   * Creates an Oder in the database with passed in object.
    *****************************************************************************/
   app.post('/postSaveOrder', function(req, res)
     {
